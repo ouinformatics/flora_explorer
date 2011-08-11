@@ -1,0 +1,141 @@
+<html>
+
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/js/date.js"></script>
+<!-- <script type="text/javascript" src="/js/timeline/timeline-api.js"</script> -->
+<script type="text/javascript" src="/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="/js/OpenLayers-2.10/OpenLayers.js"></script>
+<script type="text/javascript" src="inset_map.js"></script>
+<script type="text/javascript" src="radar_browse.js"></script>
+<script type="text/javascript" src="/js/flot/jquery.flot.js"></script>
+
+</script>
+
+<style>
+
+body {
+    width: 900px;
+    margin:0 auto;
+    margin-top:30px;
+}
+
+div.margin {
+    width: 10%;
+    float: left;
+}
+#content {
+    position: center;
+    width: 850px;
+    margin: 0px auto;
+    text-align: left;
+    border: 3px black;
+}
+
+#shim {
+    width: 400px;
+    height: 100px;
+}
+
+#map {
+    width: 400px;
+    height: 200px;
+
+}
+
+div.header {
+    width: 100%;
+    height: 100px;
+    float: left;
+    border: 0px double black;
+}
+
+.date {
+    width: 33%;
+}
+
+div.rightbox {
+    width: 10%;
+    padding: 10px;
+    height: 100px;
+    margin: 10px;
+    border: 1px double black;
+    float: right;
+}
+
+div.cell_l {
+    width: 400px;
+    height: 400px;
+    border: 0px solid black;
+    background: eee;
+    float: left;
+    margin: 10px;
+}
+
+div.cell_r {
+    width: 400px;
+    height: 400px;
+    margin: 10px;
+    border: 0px double black;
+    background: eee;
+    float: right;
+}
+
+#text, #datestring {
+    font-family: sans-serif;
+    font-size: x-small;
+}
+
+#daySlider{ width: 75%; }
+#minSlider{ width: 75%; }
+#sliders{ width: 90%; margin: 0px auto; } 
+
+.map{ 
+    width:100%; 
+    height:100%; 
+    solid: #ccc;
+    background-color:#ffffff;
+    border-width:1px;
+    border-color:#121733;
+    /*IE DOES NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+    opacity:0.75;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=61);
+    /*-ms-filter must come before filter*/
+    filter: alpha(opacity=61);
+    /*INNER ELEMENTS MUST NOT BREAK THIS ELEMENTS BOUNDARIES*/
+    /*All filters must be placed together*/
+
+}
+
+
+</style>
+
+<div id=text></div>
+<select name="commons" id="commons"></select>
+<select name="location" id="locations"></select>
+<div id=location></div>
+
+<div id=content>    
+    <div class=header></div>
+<!-- ROW 1 -->
+    <div class=cell_l>
+        <div class="map" id="map1"></div>
+    </div> 
+    <div class=cell_r><div id="shim"></div><div id="map"></div><div id="mapinfo"></div></div>
+<!-- ROW 1 Controls -->
+    <div class=cell_l style="height:75px; margin 0px auto;">
+         <div id=datestring></div>
+        <form>
+            <div id=sliders>
+            <div id=daySlider></div> 
+            <div id=minSlider></div>
+            </div>
+        </form></div>
+
+    <div class=cell_r style="height:75px"></div>
+<!-- ROW 2 -->
+    <div class=cell_l id='plot1'></div>
+    <div class=cell_r>Season Plot</div>
+</div>
+
+</html>
