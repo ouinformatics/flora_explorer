@@ -1,7 +1,17 @@
 $(document).ready(function() {
 
+// Where to find js
+var js_host = 'http://static.cybercommons.org';
+
+// Where to find wms server and mapfiles
+var wms_host = 'http://fire.rccc.ou.edu';
+var mapfile_path = '/scratch/www/map/radar_wms/'
+
+// Where to find JSONP apis
+var api_host = 'http://fire.rccc.ou.edu';
+
 var minDate = new Date('2008-11-01T00:00:00Z');
-var maxDate = new Date('2011-05-01T00:00:00Z');
+var maxDate = new Date('2011-08-01T00:00:00Z');
 
 // Size of map window in mapunits degrees if WGS84
 var winsize = 1;
@@ -15,8 +25,11 @@ var corners = {};
 
 insetMap($("#commons").val());
 
+$("#tabs").tabs();
+
 function getCommons() {
-    $.getJSON("/catalog/search/dt_data_commons/commons_id,commons_code/*", {}, 
+    $.getJSON(api_host + "/catalog/search/dt_data_commons/commons_id,commons_code/*?callback=?", 
+        { }, 
         function(result) {
             var options = $("#commons");
             options.empty();
@@ -30,7 +43,7 @@ getCommons();
 
 function getLocations(commons_id) {
 
-    $.getJSON("/catalog/search/dt_location/loc_id,loc_state,lat,lon/None,"+commons_id, {}, 
+    $.getJSON(api_host + "/catalog/search/dt_location/loc_id,loc_state,lat,lon/None,"+commons_id+"?callback=?", {}, 
             function(result) {
                 var options = $("#locations");
                 options.empty();
@@ -42,7 +55,7 @@ function getLocations(commons_id) {
 getLocations('200');
 
 function getLocationLatLon(commons_id, loc_id) {
-    $.getJSON("/catalog/search/dt_location/loc_id,lat,lon/"+loc_id+","+commons_id, {}, 
+    $.getJSON(api_host + "/catalog/search/dt_location/loc_id,lat,lon/"+loc_id+","+commons_id+"?callback=?", {}, 
     function(result) {
         $.each(result, function(index, value) {
             var bbox = {};
@@ -55,6 +68,8 @@ function getLocationLatLon(commons_id, loc_id) {
         });
     });
 };
+
+
 
 getLocationLatLon('200','BIO_LOC_105');
 
@@ -80,7 +95,7 @@ serialize = function(obj) {
 $('#scene').val(maxDate.toISOString())
 
 function makeUrl(params) {
-    mapfile = '/scratch/www/map/radar_wms/'+ new Date(params.datetime).toString('yyyy_MM_dd') + '.map'
+    mapfile = mapfile_path + new Date(params.datetime).toString('yyyy_MM_dd') + '.map'
     defparams = { 
         MAP:        mapfile, //'/scratch/www/map/radar_wms.map',   
         SERVICE:    'WMS',
@@ -94,7 +109,7 @@ function makeUrl(params) {
         BBOX:       params.loc,
         FORMAT:     'image/png'
     };
-    var url = 'http://fire.rccc.ou.edu/cgi-bin/mapserv.fcgi?' + serialize(defparams)
+    var url = wms_host + '/cgi-bin/mapserv.fcgi?' + serialize(defparams)
     return url
 };
 
@@ -116,7 +131,7 @@ function updatePlot (loc_id) { //(startDate, nDays, loc_id) {
     //loc_id = 'BIO_LOC_105';
     startDate = new Date("2011-05-01T00:00:00")
     endDate = new Date("2011-05-01T22:00:00")
-    $.getJSON('http://fire.rccc.ou.edu/mongo/db_find?callback=?', 
+    $.getJSON(api_host +'/mongo/db_find?callback=?', 
                 {   db: "bioscatter", 
                     col: "unqc_cref", 
                     query: '{"spec":{"loc_id": \"' + loc_id +'"}}',  

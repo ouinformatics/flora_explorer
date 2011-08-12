@@ -6,7 +6,9 @@ function insetMap(commons_id) {
 //    $.getJSON('/catalog/search/dt_data_commons/commons_id,commons_code/*', function(json) { $.each(json
 
 
-$.getJSON('/catalog/location/None,'+commons_id, function(json) {         
+var api_host = 'http://fire.rccc.ou.edu';
+
+$.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', function(json) {         
         featurecollection = json;
         var lon = -95;
         var lat = 35;
@@ -59,5 +61,6 @@ $.getJSON('/catalog/location/None,'+commons_id, function(json) {
             });
         
 });
+
 
 };
