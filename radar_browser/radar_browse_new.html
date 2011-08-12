@@ -24,9 +24,10 @@ div.margin {
     width: 10%;
     float: left;
 }
-#content {
+
+#tabs {
     position: center;
-    width: 850px;
+    width: 900px;
     margin: 0px auto;
     text-align: left;
     border: 3px black;
@@ -110,32 +111,52 @@ div.cell_r {
 
 </style>
 
+<span class="ui-icon ui-icon-carat-1-e"></span>
+
 <div id=text></div>
 <select name="commons" id="commons"></select>
 <select name="location" id="locations"></select>
 <div id=location></div>
 
-<div id=content>    
-    <div class=header></div>
-<!-- ROW 1 -->
-    <div class=cell_l>
-        <div class="map" id="map1"></div>
-    </div> 
-    <div class=cell_r><div id="shim"></div><div id="map"></div><div id="mapinfo"></div></div>
-<!-- ROW 1 Controls -->
-    <div class=cell_l style="height:75px; margin 0px auto;">
-         <div id=datestring></div>
-        <form>
-            <div id=sliders>
-            <div id=daySlider></div> 
-            <div id=minSlider></div>
-            </div>
-        </form></div>
 
-    <div class=cell_r style="height:75px"></div>
-<!-- ROW 2 -->
-    <div class=cell_l id='plot1'></div>
-    <div class=cell_r>Season Plot</div>
+<div id=tabs>
+        <ul>
+            <li><a href="#tab1">Bioscatter</a></li>
+            <li><a href="#tab2">Settings</a></li>
+        </ul>
+
+    <div id="tab1">    
+        <div class=header></div>
+    <!-- ROW 1 -->
+        <div class=cell_l>
+            <div class="map" id="map1"></div>
+        </div> 
+        <div class=cell_r>
+            <div id="shim"></div>
+            <div id="map"></div>
+            <div id="mapinfo"></div>
+        </div>
+    <!-- ROW 1 Controls -->
+        <div class=cell_l style="height:75px; margin 0px auto;">
+             <div id=datestring></div>
+             <form>
+                <div id=sliders>
+                    <div id=daySlider></div> 
+                    <div id=minSlider></div>
+                </div>
+             </form>
+         </div>
+
+        <div class=cell_r style="height:75px"></div>
+    <!-- ROW 2 -->
+        <div class=cell_l id='plot1'></div>
+        <div class=cell_r>Season Plot</div>
+    </div>
+    
+    <div id="tab2">
+    
+    </div>
+
 </div>
 
 </html>
