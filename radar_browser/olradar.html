@@ -1,0 +1,31 @@
+<html>
+<script src="http://static.cybercommons.org/js/OpenLayers-2.10/OpenLayers.js"></script>
+<script type="text/javascript">
+    var map, layer;
+    function init() {
+        map = new OpenLayers.Map('map');
+        layer = new OpenLayers.Layer.WMS( "Radar Data", 
+            "http://fire.rccc.ou.edu/cgi-bin/mapserv.fcgi?",
+            {   map: '/scratch/www/map/radar_wms/2011_05_01.map',
+                service: 'WMS',
+                version: '1.3.0',
+                request: 'GetMap',
+                layers:  'nexrad-unqc_cref',
+                crs:     'epsg:4326',
+                time:    '2011-05-01T00:00:00.000Z',
+                bbox:    '33.6052,-94.3118,35.6052,-92.3118',
+                format:  'image/png',
+            }
+        );
+        map.addLayer(layer);
+        //map.zoomToExtent(new OpenLayers.Bounds(-94.3118, 33.6052,-92.3118,-94.3118)); 
+    }
+</script>
+
+<body onload="init()">
+
+<div id="map" class="smallmap"></div>
+
+
+</body>
+</html>
