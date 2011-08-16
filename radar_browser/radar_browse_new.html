@@ -1,14 +1,21 @@
 <html>
 
 <link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
-<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="/js/date.js"></script>
 <!-- <script type="text/javascript" src="/js/timeline/timeline-api.js"</script> -->
 <script type="text/javascript" src="/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery.event.drag-2.0.min.js"></script>
 <script type="text/javascript" src="/js/OpenLayers-2.10/OpenLayers.js"></script>
-<script type="text/javascript" src="inset_map.js"></script>
-<script type="text/javascript" src="radar_browse.js"></script>
+<script type="text/javascript" src="/js/SlickGrid-1.4.3/slick.grid.js"></script>
+<link type="text/css" href="/js/SlickGrid-1.4.3/slick.grid.css" rel="Stylesheet"/>
+
 <script type="text/javascript" src="/js/flot/jquery.flot.js"></script>
+
+<script type="text/javascript" src="inset_map.js"></script>
+<script type="text/javascript" src="select_grid.js"></script>
+<script type="text/javascript" src="radar_browse.js"></script>
+
 
 </script>
 
@@ -18,6 +25,7 @@ body {
     width: 900px;
     margin:0 auto;
     margin-top:30px;
+    /*background-color:tan;*/
 }
 
 div.margin {
@@ -108,6 +116,19 @@ div.cell_r {
 
 }
 
+.slick-row {
+    font-size:x-small;
+}
+.slick-column-name {
+    font-size:x-small;
+}
+
+#locgrid {
+    width:400px;
+    height:100px;
+    display:none;
+}
+
 
 </style>
 
@@ -117,6 +138,7 @@ div.cell_r {
 <select name="commons" id="commons"></select>
 <select name="location" id="locations"></select>
 <div id=location></div>
+
 
 
 <div id=tabs>
@@ -134,7 +156,14 @@ div.cell_r {
         <div class=cell_r>
             <div id="shim"></div>
             <div id="map"></div>
-            <div id="mapinfo"></div>
+            <table>
+                <tr>
+                    <td valign="top" width="100%">
+                        <div id="locgrid"></div>
+                    </td>
+                </tr>
+             </table>    
+             <div id="mapinfo"></div>
         </div>
     <!-- ROW 1 Controls -->
         <div class=cell_l style="height:75px; margin 0px auto;">
@@ -158,5 +187,7 @@ div.cell_r {
     </div>
 
 </div>
+
+
 
 </html>

@@ -1,3 +1,4 @@
+var selection = [];
 
 function insetMap(commons_id) {
     featurecollection = {}
@@ -7,6 +8,7 @@ function insetMap(commons_id) {
 
 
 var api_host = 'http://fire.rccc.ou.edu';
+
 
 $.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', function(json) {         
         featurecollection = json;
@@ -42,21 +44,42 @@ $.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', functio
         var vector_layer = new OpenLayers.Layer.Vector(); 
         map.addLayer(vector_layer);
         vector_layer.addFeatures(geojson_format.read(featurecollection));
-    
-        var select = new OpenLayers.Control.SelectFeature([vector_layer]);
-        map.addControl(select);
-        select.activate();
+        vector_layer.events.on();
+
+        drawControls = {
+            select: new OpenLayers.Control.SelectFeature( vector_layer, 
+                {
+                    box: true,
+                    multipleKey: "shiftKey",
+                    toggleKey:   "ctrlKey"
+                }
+            ),
+        };
+
+        map.addControl(drawControls.select);
+
+        var selectctrl = drawControls.select;
+        selectctrl.activate();
+
+        
+        //map.addControl(select, {box:true});
+        //var selection = [];
 
         vector_layer.events.on({
-                featureselected: function(event) {
+                featureselected: function(event) {    
                     var feature = event.feature;
-                    var id = feature.attributes.commons_id;
-                    var name = feature.attributes.loc_id;
-                    var output = "<a href='/databrowse/catalog/" + id + "/" + name + "/'>" + name + "</a>";
-                    $("#mapinfo").html(output);
+                    //$("#mapinfo").append(JSON.stringify(feature.attributes));
+                    selection.push(feature.attributes);
+                                       
+                },
+                featuresselected: function(event) {
+                   for (item in event) {
+                        $("#mapinfo").append(JSON.serialize(item));
+                   }
                 },
                 featureunselected: function() {
-                    attributes.empty();
+                    selection = [];
+                    $("#mapinfo").empty();
                 }
             });
         
