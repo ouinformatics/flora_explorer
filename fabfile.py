@@ -3,8 +3,9 @@
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.colors import red
+import os
 
-env.sitename = 'radar_browse'
+env.sitename = os.path.basename(os.getcwd())
 env.host = 'static.cybercommons.org'
 
 
