@@ -1,0 +1,64 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>OpenLayers TileCache Example</title>
+    <script src="http://static.cybercommons.org/js/OpenLayers-2.10/OpenLayers.js"></script>
+    <script type="text/javascript">
+        var map, layer;
+        function init(){
+
+            var extent = new OpenLayers.Bounds(-131.755250, 17.934651, -58.244750, 57.065349)
+            map = new OpenLayers.Map( $('map'), {
+                resolutions: [0.087890625, 0.0439453125, 0.02197265625, 0.010986328125, 0.0054931640625, 0.00274658203125 ]
+            });
+            layer = new OpenLayers.Layer.TileCache("TileCache Layer",
+                ["http://static.cybercommons.org/tc/"],
+                "20100501T000000",
+                {
+                    maxExtent: extent,
+                    maxResolution: [ 0.142578125 ],
+                    numZoomLevels: 6,
+                    //serverResolutions: [0.142578125, 0.0712890625, 0.03564453125, 0.023763020833333332  ]
+                }
+            );
+            map.addLayer(layer);
+            map.zoomToExtent(extent);
+        }
+
+        OpenLayers.Util.onImageLoadError = function() {
+            /**
+             * For images that don't exist in the cache, you can display
+             * a default image - one that looks like water for example.
+             * To show nothing at all, leave the following lines commented out.
+             */
+
+            //this.src = "../img/blank.gif";
+            //this.style.display = "";
+        };
+    </script>
+  </head>
+  <body onload="init()">
+      <h1 id="title">TileCache Example</h1>
+
+      <div id="tags">
+          tile, cache, tilecache, wmsc, wms-c
+      </div>
+
+      <p id="shortdesc">
+        Demonstrates a TileCache layer that loads tiles from from a web
+        accessible disk-based cache only.
+      </p>
+
+    <div id="map" class="smallmap"></div>
+
+    <div id="docs">
+        This layer should be used for web accessible disk-based caches only.
+        It is not used to request new tiles from TileCache.  Note that you
+        should specify resolutions explicitly on this layer so that they match
+        your TileCache configuration.
+    </div>
+  </body>
+</html>
+
