@@ -27,38 +27,46 @@ insetMap($("#commons").val());
 
 $("#tabs").tabs();
 
+
+// Get commons codes for drop-down menu
 function getCommons() {
-    $.getJSON(api_host + "/catalog/search/dt_data_commons/commons_id,commons_code/*?callback=?", 
-        { }, 
-        function(result) {
-            var options = $("#commons");
-            options.empty();
-            $.each(result, function(index, value) {
-                options.append($("<option/>").val(value.commons_id).text(value.commons_code));
-            });
-        });
-}
-
-getCommons();
-
-function getLocations(commons_id) {
-
-    $.getJSON(api_host + "/catalog/search/dt_location/loc_id,loc_state,lat,lon/None,"+commons_id+"?callback=?", {}, 
+        $.getJSON(api_host + "/catalog/search/dt_data_commons/commons_id,commons_code/*?callback=?", 
+            { }, 
             function(result) {
-                var options = $("#locations");
+                var options = $("#commons");
                 options.empty();
-                $.each(result, function(index, value) { 
-                    options.append($("<option/>").val(value.loc_id).text(value.loc_id+"("+value.loc_state+")"));
-                              });
-            });                
-}
-getLocations('200');
+                $.each(result, function(index, value) {
+                    if (index == 1) { options.append($("<option/>").val(value.commons_id).text(value.commons_code).attr("selected", "selected")); }
+                    else {
+                    options.append($("<option/>").val(value.commons_id).text(value.commons_code));
+                    };
+                });
+            });
+    }
+    getCommons();
+
+    function getLocations(commons_id) {
+
+        $.getJSON(api_host + "/catalog/search/dt_location/loc_id,loc_state,lat,lon/None,"+commons_id+"?callback=?", {}, 
+                function(result) {
+                    var options = $("#locations");
+                    options.empty();
+                    $.each(result, function(index, value) { 
+                        options.append($("<option/>").val(value.loc_id).text(value.loc_id+"("+value.loc_state+")"));
+                                  });
+                });                
+    }
+
+
+    getLocations('200');
+
+
 
 function getLocationLatLon(commons_id, loc_id) {
-    $.getJSON(api_host + "/catalog/search/dt_location/loc_id,lat,lon/"+loc_id+","+commons_id+"?callback=?", {}, 
+    var bbox = {};
+    $.getJSON(api_host + "/catalog/search/dt_location/loc_id,lat,lon/"+loc_id+","+commons_id+"?callback=?", {},  
     function(result) {
         $.each(result, function(index, value) {
-            var bbox = {};
             bbox.y1 = value.lat - winsize;
             bbox.x1 = value.lon - winsize;
             bbox.y2 = value.lat + winsize;
@@ -69,9 +77,6 @@ function getLocationLatLon(commons_id, loc_id) {
     });
 };
 
-
-
-getLocationLatLon('200','BIO_LOC_105');
 
 $("#commons").change("select", function() {
     getLocations($("#commons").val());

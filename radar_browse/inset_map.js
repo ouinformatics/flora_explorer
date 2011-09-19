@@ -1,5 +1,4 @@
 var selection = [];
-
 function insetMap(commons_id) {
     featurecollection = {}
     var dialog;
@@ -41,7 +40,7 @@ $.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', functio
 
         map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
         var geojson_format = new OpenLayers.Format.GeoJSON();
-        var vector_layer = new OpenLayers.Layer.Vector(); 
+        var vector_layer = new OpenLayers.Layer.Vector();
         map.addLayer(vector_layer);
         vector_layer.addFeatures(geojson_format.read(featurecollection));
         vector_layer.events.on();
@@ -51,7 +50,7 @@ $.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', functio
                 {
                     box: true,
                     multipleKey: "shiftKey",
-                    toggleKey:   "ctrlKey"
+                    toggleKey:   "ctrlKey",
                 }
             ),
         };
@@ -64,18 +63,13 @@ $.getJSON(api_host + '/catalog/location/None,'+commons_id+'?callback=?', functio
         
         //map.addControl(select, {box:true});
         //var selection = [];
-
+        var updated = new Date();
         vector_layer.events.on({
                 featureselected: function(event) {    
                     var feature = event.feature;
                     //$("#mapinfo").append(JSON.stringify(feature.attributes));
                     selection.push(feature.attributes);
-                                       
-                },
-                featuresselected: function(event) {
-                   for (item in event) {
-                        $("#mapinfo").append(JSON.serialize(item));
-                   }
+                    
                 },
                 featureunselected: function() {
                     selection = [];

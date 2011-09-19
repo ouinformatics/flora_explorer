@@ -3,7 +3,17 @@
 <script type="text/javascript">
     var map, layer;
     function init() {
-        map = new OpenLayers.Map('map');
+
+
+         vlayer = new OpenLayers.Layer.Vector( "Editable" );
+        map = new OpenLayers.Map( 'map', {
+                controls: [
+                        new OpenLayers.Control.PanZoom(),
+                        new OpenLayers.Control.EditingToolbar(vlayer)
+                    ]
+                });
+
+
         layer = new OpenLayers.Layer.WMS( "Radar Data", 
             "http://fire.rccc.ou.edu/cgi-bin/mapserv.fcgi?",
             {   map: '/scratch/www/map/radar_wms/2011_05_01.map',
@@ -17,8 +27,15 @@
                 format:  'image/png',
             }
         );
-        map.addLayer(layer);
-        //map.zoomToExtent(new OpenLayers.Bounds(-94.3118, 33.6052,-92.3118,-94.3118)); 
+
+       
+        map.addLayers([layer, vlayer]);
+       
+         
+        var lon = -95;
+        var lat = 35;
+        var zoom = 8;
+        map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
     }
 </script>
 
