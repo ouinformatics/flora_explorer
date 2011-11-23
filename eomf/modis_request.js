@@ -2,7 +2,57 @@ $(document).ready(function(){
 
 $("#spinner").hide()
 
-products = [{"cat_name":'MOD09A1_evi'}, {"cat_name":'MOD09A1_lswi'}, {"cat_name": "MOD09A1_ndvi"}]
+products = [
+  {
+    "cat_id": 1452140, 
+    "cat_name": "MOD09A1_aerosolmask"
+  }, 
+  {
+    "cat_id": 1452141, 
+    "cat_name": "MOD09A1_blue"
+  }, 
+  {
+    "cat_id": 1452142, 
+    "cat_name": "MOD09A1_phenology"
+  }, 
+  {
+    "cat_id": 1452143, 
+    "cat_name": "MOD09A1_ndwi"
+  }, 
+  {
+    "cat_id": 1452144, 
+    "cat_name": "MOD09A1_ndsi"
+  }, 
+  {
+    "cat_id": 1452145, 
+    "cat_name": "MOD09A1_snow"
+  }, 
+  {
+    "cat_id": 1452146, 
+    "cat_name": "MOD09A1_cloudmask"
+  }, 
+  {
+    "cat_id": 1452147, 
+    "cat_name": "MOD09A1_oceanmask"
+  }, 
+  {
+    "cat_id": 1452148, 
+    "cat_name": "MOD09A1_lswi"
+  }, 
+  {
+    "cat_id": 1452149, 
+    "cat_name": "MOD09A1_evi"
+  }, 
+  {
+    "cat_id": 1452150, 
+    "cat_name": "MOD09A1_ndvi"
+  }
+]
+
+pickproduct = $("#product");
+$.each(products, function() {
+    pickproduct.append($("<option/>").val(this.cat_name).text(this.cat_name));
+});
 
 // Get list of countries to pick from
 $.getJSON('http://test.cybercommons.org/mongo/db_find/eomf/countries/{"sort":[("country_name",1)]}?callback=?', 
@@ -14,62 +64,22 @@ $.getJSON('http://test.cybercommons.org/mongo/db_find/eomf/countries/{"sort":[("
     }
 );
 
-pickproduct = $("#product");
-$.each(products, function() {
-    pickproduct.append($("<option/>").val(this.cat_name).text(this.cat_name));
-});
-
-
 $(".datepick").change(function() { $(".datepick").datepicker("option", "dateFormat", 'yy-mm-dd');} );
 $("#start_date").datepicker({ minDate: new Date(2000,2-1,24), changeYear: true }); 
 $("#end_date").datepicker({ minDate: new Date(2000,2-1,24), changeYear: true } );
 
-function startDownload(url) {
-  window.open(url,'Download')
-}
+
+taskdesc = { 
+    "taskname":   'cybercomq.static.tasks.modiscountry',
+    "taskq":      'static',
+    "uiparams":   ['#product','#country','#start_date','#end_date'],// UI Selected
+    "status":     '#status',
+    "spinner":    '#spinner',
+    "pollinterval": 2000,
+};
 
 
-var URL = 'http://test.cybercommons.org/queue/run/cybercomq.static.tasks.modiscountry@static/';
-
-function poll_status(task_id) {
-     $.getJSON('http://test.cybercommons.org/queue/task/' + task_id + '?callback=?', 
-                    function(data) { 
-                        if (data.status == "PENDING") {
-                            setTimeout(function() { poll_status(task_id);}, 2000);
-                            $("#status").text("Working...");
-                            $("#spinner").show();
-                        } else if (data.status == "FAILURE") {
-                            $("#status").text(data.status);
-                            $("#spinner").hide();
-                        } else if (data.status == "SUCCESS") {
-                            $("#status").html('<a href="' + data.tombstone[0].result + '">Download</a>');
-                            setTimeout(function() { startDownload(data.tombstone[0].result)}, 3000);
-                            $("#spinner").hide();
-                        }
-                    });
-}
-
-function run_task() { 
-            var urlstring = URL + $("#product").val() +'/'+ $("#country").val() + '/' + $("#start_date").val() + '/' + $("#end_date").val();
-            $("#spinner").show();
-            $.getJSON(urlstring + '?callback=?', function(data) {
-                $("#status").text("Task submitted...");
-                var task_id = data.task_id;
-                //$("#tombstone").text("http://fire.rccc.ou.edu/mongo/db_find/cybercom_queue/cybercom_queue_meta/{'spec':{'_id':'"+ task_id +"'}}");
-                setTimeout(function() {poll_status(task_id);}, 5000 );
-            }) 
-}; 
-
-     
-$(".button").click( function() {run_task();} );
-
-
-$("#URL").bind('URL_update', function() {
-        var urlstring = URL + $("#product").val() +'/'+ $("#country").val() + '/' + $("#start_date").val() + '/' + $("#end_date").val()
-        //$("#URL").html('<a href="' + urlstring + '">'+ urlstring + '</a>' )
-});
-
-
+$(".button").click( function() {calltask(taskdesc);} );
 
 });
 
