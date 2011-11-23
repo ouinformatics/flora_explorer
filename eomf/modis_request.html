@@ -1,15 +1,19 @@
-<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
+
 <link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
-<link type="text/css" href="form.css" rel="Stylesheet" />
+<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet" />
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<link type="text/css" href="form.css" rel="Stylesheet" />
 
 <script type="text/javascript" src="modis_request.js"></script>
 
 <html>
 
+<div id=ccform style="width:400px;" id="content" class="ui-widget-content ui-corner-all">
+
 <form id="request">
 <fieldset>
-<legend>MODIS Product Download</legend>
+<div class="ui-widget-header ui-corner-all" style="padding:2px;indent:2px;">MODIS Product Download</div>
 <label for="product">MODIS Product: </label> 
     <select id=product></select> <br>
 <label for="country">Country: </label>
@@ -18,13 +22,17 @@
     <input type="text" id="start_date" class="datepick"> <br>
 <label for="end_date">End Date: </label>
     <input type="text" id="end_date" class="datepick"> <br>
-<div id="run" style="background-color:gray;padding:10px;">Make Request</div>
+<div>
+<input type="button" name="Submit" value="Submit" class=button style="float:left;"/> <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" />
+</div><div id="status" style="float:left;"></div>
+</div>
 </fieldset>
 </form>
 
+</div>
+
 <div id="tombstone"></div>
 <div id="URL"></div>
-<div id="spinner" style="display:none"><img src="spinner.gif" id="img-spinnger" alt="Loading" /> </div>
-<div id="status"></div>
+
 
 </html>
