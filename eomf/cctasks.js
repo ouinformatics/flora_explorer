@@ -26,21 +26,26 @@ function startDownload(url) {
 }
 
 
-
 // Called by call task to poll queue status of task based on task_id
 function poll_status(task_id) {
      $.getJSON('http://test.cybercommons.org/queue/task/' + task_id + '?callback=?', 
                     function(data) { 
                         if (data.status == "PENDING") {
                             setTimeout(function() { poll_status(task_id);}, taskdesc.pollinterval);
+                            $(taskdesc.status).show();
+                            $(taskdesc.status).removeClass('label success warning important').addClass('label warning');
                             $(taskdesc.status).text("Working...");
                             $(taskdesc.spinner).show();
                         } else if (data.status == "FAILURE") {
-                            $(taskdesc.status).text(data.status);
+                            $(taskdesc.status).show();
+                            $(taskdesc.status).removeClass('label success warning important').addClass('label important');
+                            $(taskdesc.status).text("Task failed!");
                             $(taskdesc.spinner).hide();
                         } else if (data.status == "SUCCESS") {
+                            $(taskdesc.status).show();
+                            $(taskdesc.status).removeClass('label success warning important').addClass('label success');
                             $(taskdesc.status).html('<a href="' + data.tombstone[0].result + '">Download</a>');
-                            setTimeout(function() { startDownload(data.tombstone[0].result)}, 3000);
+                            //setTimeout(function() { startDownload(data.tombstone[0].result)}, 3000);
                             $(taskdesc.spinner).hide();
                         }
                     });

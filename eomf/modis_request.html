@@ -1,38 +1,45 @@
 
 <link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
 <link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet" />
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
-<link type="text/css" href="form.css" rel="Stylesheet" />
+<!--<link type="text/css" href="form.css" rel="Stylesheet" />-->
 <script type="text/javascript" src="cctasks.js"></script>
 <script type="text/javascript" src="modis_request.js"></script>
 
 <html>
 
+<div class="container">
+
 <div id=ccform style="width:400px;" id="content" class="ui-widget-content ui-corner-all">
 
-<form id="request">
+<form id="request" class="form-stacked">
 <fieldset>
 <div class="ui-widget-header ui-corner-all" style="padding:2px;indent:2px;">MODIS Product Download</div>
-<label for="product">MODIS Product: </label> 
-    <select id=product></select> <br>
-<label for="country">Country: </label>
-    <select id=country></select> <br>
-<label for="start_date">Start Date: </label>
-    <input type="text" id="start_date" class="datepick"> <br>
-<label for="end_date">End Date: </label>
-    <input type="text" id="end_date" class="datepick"> <br>
-<div>
-<input type="button" name="Submit" value="Submit" class=button style="float:left;"/> <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" />
-</div><div id="status" style="float:left;"></div>
+    <label for="product">MODIS Product </label> 
+        <select id=product></select> <br>
+    <label for="country">Country </label>
+        <select id=country></select> <br>
+    <label for="start_date">Start Date</label>
+        <input type="text" id="start_date" class="datepick"> <br>
+    <label for="end_date">End Date</label>
+        <input type="text" id="end_date" class="datepick"> <br>
+    <label for="email">Email</label>
+        <input type="text" id="email"><br>
+        <span class="help-block">Enter your email to receive download link via email (Optional)</span>
+
+  <div style="float:left;height:3em">
+     <input type="button" name="Submit" value="Submit" class=button style="float:left">
+     <div id="containspinner" style="float:left;width:16px;height:16px">
+        <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" /></div>
+     </div>
+      <div id="status" class="label success" style="line-height:3em;float:left;"></div>
+  </div>
 </div>
 </fieldset>
 </form>
-
 </div>
-
-<div id="tombstone"></div>
-<div id="URL"></div>
-
+</div>
 
 </html>
