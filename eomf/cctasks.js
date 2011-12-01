@@ -1,7 +1,7 @@
 // Some helpers for running Cybercommons Tasks
 
 // Should point to queue submission target
-var SERVICE_HOST = 'http://test.cybercommons.org/queue/run/'
+var SERVICE_HOST = 
 
 // Configuration object for calling cybercom queue tasks.
 // Parameters can be specified in [params] list object, or a special list of 
@@ -31,50 +31,66 @@ function poll_status(task_id) {
      $.getJSON('http://test.cybercommons.org/queue/task/' + task_id + '?callback=?', 
                     function(data) { 
                         if (data.status == "PENDING") {
-                            setTimeout(function() { poll_status(task_id);}, taskdesc.pollinterval);
-                            $(taskdesc.status).show();
-                            $(taskdesc.status).removeClass('label success warning important').addClass('label warning');
-                            $(taskdesc.status).text("Working...");
-                            $(taskdesc.spinner).show();
+                            options.onPending(task_id);                            
                         } else if (data.status == "FAILURE") {
-                            $(taskdesc.status).show();
-                            $(taskdesc.status).removeClass('label success warning important').addClass('label important');
-                            $(taskdesc.status).text("Task failed!");
-                            $(taskdesc.spinner).hide();
+                            options.onFailure(data);
                         } else if (data.status == "SUCCESS") {
-                            $(taskdesc.status).show();
-                            $(taskdesc.status).removeClass('label success warning important').addClass('label success');
-                            $(taskdesc.status).html('<a href="' + data.tombstone[0].result + '">Download</a>');
-                            //setTimeout(function() { startDownload(data.tombstone[0].result)}, 3000);
-                            $(taskdesc.spinner).hide();
+                            options.onSuccess(data);
                         }
                     });
 }
 
 function calltask(taskdesc) {
+    defaults = {
+       "service_host": 'http://test.cybercommons.org/queue/run/',
+       "status":     '#status',
+       "spinner":    '#spinner',
+       "pollinterval": 2000,
+       "onPending": function(task_id) {
+            setTimeout(function() { poll_status(task_id);}, options.pollinterval);
+            $(options.status).show();
+            $(options.status).removeClass('label success warning important').addClass('label warning');
+            $(options.status).text("Working...");
+            $(options.spinner).show();
+        },
+       "onFailure": function(data) {
+             $(options.status).show();
+             $(options.status).removeClass('label success warning important').addClass('label important');
+             $(options.status).text("Task failed!");
+             $(options.spinner).hide();
+        },
+       "onSuccess": function(data) { 
+                $(options.status).show();
+                $(options.status).removeClass('label success warning important').addClass('label success');
+                $(options.status).html('<a href="' + data.tombstone[0].result + '">Download</a>');
+                $(options.spinner).hide();
+            },
+        }
+    options = $.extend(true, {}, defaults, taskdesc)
+
     var taskparams = ""
-    if (taskdesc.params) {
-        for (item in taskdesc.params) {
-            taskparams=taskparams.concat('/' + taskdesc.params[item]);
+    if (options.params) {
+        for (item in options.params) {
+            taskparams=taskparams.concat('/' + options.params[item]);
         }
     }
-    else if (taskdesc.uiparams) {
-        for (item in taskdesc.uiparams) {
-            taskparams = taskparams.concat('/' + $(taskdesc.uiparams[item]).val() );
+    else if (options.uiparams) {
+        for (item in options.uiparams) {
+            taskparams = taskparams.concat('/' + $(options.uiparams[item]).val() );
         }
     }
     var taskcall = ""
-    if (taskdesc.taskq) {
-        taskcall = taskdesc.taskname + '@' + taskdesc.taskq;
+    if (options.taskq) {
+        taskcall = options.taskname + '@' + options.taskq;
     } else {
-        taskcall = taskdesc.taskname;
+        taskcall = options.taskname;
     }
 
-    var request = SERVICE_HOST + taskcall + taskparams;
+    var request = options.service_host + taskcall + taskparams;
 
     $.getJSON(request + '?callback=?', 
         function(data) { 
-            $(taskdesc.status).text('Task submitted...');
+            $(options.status).text('Task submitted...');
             var task_id = data.task_id;
             setTimeout(function() { poll_status(task_id);}, taskparams.pollinterval); 
     });
