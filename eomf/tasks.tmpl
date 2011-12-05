@@ -1,0 +1,75 @@
+<html>
+<body>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet" />
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+
+<script type="text/javascript" src="cctasks.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+function populate_selectors() {
+{{#params}}
+    {{#select_source}}
+    $.getJSON('{{select_source}}', 
+        function(items) {
+            select = $("#{{id}}");
+            $.each(items, function() {
+                select.append($("<option/>").val(this.{{select_var}}).text(this.{{select_name}}));
+            });
+        }
+    );
+    {{/select_source}}
+{{/params}}
+}
+
+populate_selectors();
+
+{{#task}}
+{{extrajs}}
+{{/task}}
+
+{{#params}}
+{{#jQuery}}
+$("#{{id}}").{{jQuery}};
+{{/jQuery}}
+{{/params}}
+
+
+{{#task}}
+var taskdesc = {
+    "taskname": "{{taskname}}",
+    "taskq": "{{taskq}}",
+    "uiparams": {{uiparams}}
+};
+{{/task}}
+
+$(".button").click( function() {calltask(taskdesc);} );
+
+
+});
+</script>
+
+<form class="form-stacked">
+    {{#params}}
+        <label for="{{id}}">{{name}}</label>
+          <{{formtag}} {{#type}}type="{{type}}"{{/type}} id="{{id}}" {{#class}}class="{{class}}"{{/class}}></{{formtag}}>
+          {{#help-block}} 
+            <span class="help-block">{{help-block}}</span>
+          {{/help-block}}
+    {{/params}}
+
+<div style="float:left;height:3em">
+    <input type="button" name="Submit" value="Submit" class=button style="float:left">
+    <div id="containspinner" style="float:left;width:16px;height:16px">
+        <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" /></div>
+    </div>
+    <div id="status" class="label success" style="line-height:3em;float:left;"></div>
+</div>
+
+</form>
+</body>
+</html>
