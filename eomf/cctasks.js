@@ -17,6 +17,20 @@ taskdesc = {
 */
 // Called by call task to poll queue status of task based on task_id
 
+function test_auth_tkt() {
+    $("#auth_dialog").hide()
+    if ($.cookie('auth_tkt') ) {
+        $('#auth_message').html("you're logged in")
+    }
+    else {
+        $("#auth_dialog").dialog( { height:200, modal: true} );
+        $("#auth_dialog").dialog("open");
+        $('#auth_message').html('Please <a href="http://test.cybercommons.org/accounts/login/">login</a> to track your tasks via the cybercommons').addClass('label warning')
+    }
+
+}
+
+
 
 function poll_status(task_id) {
     $.getJSON('http://test.cybercommons.org/queue/task/' + task_id + '?callback=?', function (data) {

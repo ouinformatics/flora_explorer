@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+test_auth_tkt();
+
 $("#spinner").hide();
 $("#status").hide();
 
@@ -28,7 +30,6 @@ $.getJSON('http://test.cybercommons.org/mongo/db_find/eomf/countries/{"sort":[("
 $(".datepick").change(function() { $(".datepick").datepicker("option", "dateFormat", 'yy-mm-dd');} );
 $("#start_date").datepicker({ minDate: new Date(2000,2-1,24), maxDate: new Date(),  changeYear: true }); 
 $("#end_date").datepicker({ minDate: new Date(2000,2-1,24), maxDate: new Date(), changeYear: true } );
-
 
 
 // Pass US 

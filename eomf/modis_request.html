@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
 <!--<link type="text/css" href="form.css" rel="Stylesheet" />-->
 <script type="text/javascript" src="cctasks.js"></script>
 <script type="text/javascript" src="modis_request.js"></script>
@@ -11,7 +12,8 @@
 <html>
 
 <div class="container">
-
+<div id=auth_message> </div>
+<div id=auth_dialog>In order to keep track of jobs you've requested, please login to the cyberCommons.</div>
 <div id=ccform style="width:400px;" id="content" class="ui-widget-content ui-corner-all">
 
 <form id="request" class="form-stacked">
