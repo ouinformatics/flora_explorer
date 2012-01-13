@@ -102,15 +102,14 @@ function onReady(){
     function test_auth_tkt() {
             $.getJSON('http://test.cybercommons.org/accounts/userdata/?callback=?',function(data){
                     var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
-                    alert(data); alert(data[0]);
-                    if ( data.name == "guest"){
+                    if ( data['user']['name'] == "guest"){
                         var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
                         window.location = slink; 
                     }
                     else{
                         var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
                         slogout = '! Click <a href="' + slink + '">logout</a> to login as a differnet user.';
-                        $('#auth_message').html("Welcome " + data.name + slogout);
+                        $('#auth_message').html("Welcome " + data['user']['name'] + slogout);
                     }    
                     //$('#result_http' ).append(data.html)
              } );
