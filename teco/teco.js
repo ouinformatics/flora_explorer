@@ -1,19 +1,91 @@
 function onReady(){    
-
+    baseurl_auth='http://test.cybercommons.org/'
+    baseurl_workflow ='http://test.cybercommons.org'
     test_auth_tkt();
+    loadSites();
+    setLocations();
     JSON_URL=''
     filepath =''
     result_id=''
     $('#loading').hide();
     $('#set_inputSP').hide();
     $('#runSP').hide();
+    //$('#opener').button();
     $('#runBut').button();
     $('#tabs').tabs();    
     $('#rtabs').tabs();
     $("#right").height($("#left").height());
-    historyLoad();
-    //$('#runBut').button();
+    ready_val= false;
+    cur_site = 'US-HA1';
+    $('#AMF_site').change(function () {
+          if (ready_val == true){
+            //tecolayer = map.layers[1]
+            //selectFeature = new OpenLayers.Control.SelectFeature(tecolayer);
+            //tecolayer.features.forEach(function(data){if(data.attributes.loc_id =="US-HA1"){selectFeature.select(data);}});
+             sitechange();   
+          }
+        }).change();
+    loadParams(cur_site);
+    $('#data-dialog').bind('dialogclose', function(event) {
+        setData();
+    });
+    function sitechange(){
+        $("#AMF_site option:selected").each(function () {
+                JSON_URL=''
+                filepath =''
+                result_id=''
+                $("#runBut").attr("disabled", "disabled");
+                loadParams( $(this).text() );
+                cur_site = $(this).text();
+            });
+    }
+    function setData(){
+        var baseyear = "(" + $('#Startyear #sortable1 li:eq(0)').html() + "," + $('#Endyear #sortable1 li:eq(0)').html() + ")"
+        $('#idata').val(baseyear);
+        var flist ='[';
+        var total = $('#sortable2 li').length;
+        $('#sortable2 li').each(function(index) {
+            if(index == total-1){
+                flist = flist + "(" +  $(this).text() + ")";
+            }
+            else{
+                flist = flist + "(" +  $(this).text() + "),";
+            }
+        });
+        flist=flist + "]";
+        $('#fdata').val(flist);
+    }
+    $('#site-dialog').bind('dialogclose', function(event) {
+        $('#AMF_site').val($('#sitesel').val());
+        sitechange();
+    });
+    $( "#opener" ).button();
+    $( "#opener" ).click(function() {
+       $('#siteparam-dialog').dialog("open");
+    });
+    $( "#fopener" ).button();
+    $( "#fopener" ).click(function() {
+      $('#data-dialog').dialog("open");
+    });
+    $( "#siteopener" ).button();
+    $( "#siteopener" ).click(function() {
+      $('#site-dialog').dialog("open");
+      map.zoomToMaxExtent();
+    });
+    $('#site-dialog').bind('dialogopen', function(event) {
+        //map.zoomToMaxExtent();
+        tecolayer = map.layers[1]
+        selectFeature = new OpenLayers.Control.SelectFeature(tecolayer);
+        tecolayer.features.forEach(function(data){if(data.attributes.loc_id == $('#AMF_site').val()){selectFeature.select(data);}});
+        //map.zoomToMaxExtent();
+    });
+    //Adjust button width
+    $( "#siteopener" ).width($("#fopener").width());
+    $( "#opener" ).width($("#fopener").width());
+    
+    //Run Workflow
     $('#runBut').click(function(){
+        //processData();
         //$('#loading').show();
         $('#resultDiv').html("<h1>Status: Processing</h1>");
         $('#set_input').css('background-color', 'yellow');
@@ -32,7 +104,10 @@ function onReady(){
             //http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.initTECOrun?callback=?
             var base_yrs = $('#idata').val();
             var forc = $('#fdata').val();
-            var Params = "US-HA1&base_yrs=" + base_yrs + "&forecast=" + forc;  
+            var d = $.param($("#siteparam").serializeArray()).replace(/=/g,"':'").replace(/&/g,"','");
+            var siteParam = "{'" + d + "'}"
+            //var siteParam 
+            var Params = cur_site + "&base_yrs=" + base_yrs + "&forecast=" + forc + "&siteparam=" + siteParam ;  
             $.getJSON("http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.initTECOrun?callback=?&site=" + Params , function(task){
                 var j = task ; 
                 JSON_URL = JSON_URL + j.task_id + '/?callback=?';
@@ -78,9 +153,9 @@ function onReady(){
                                         //var http = xhr_data.tombstone[0].result;//.split("|")[1];
                                         $.getJSON('http://test.cybercommons.org/queue/report/' + result_id + '/?callback=?',function(data){
                                             $('#result_http' ).html(data.html)
-                                            $.getJSON('http://test.cybercommons.org/queue/report/' + filepath + '/?callback=?',function(data){
+                                           /* $.getJSON('http://test.cybercommons.org/queue/report/' + filepath + '/?callback=?',function(data){
                                             $('#result_http' ).append(data.html)
-                                            } );
+                                            } );*/
                                             historyLoad();
                                         } );
                                         //$.getJSON('http://test.cybercommons.org/queue/report/' + filepath + '/?callback=?',function(data){
@@ -100,18 +175,21 @@ function onReady(){
             });
         }   //class ="ui-widget button "  
     function test_auth_tkt() {
-            $.getJSON('http://test.cybercommons.org/accounts/userdata/?callback=?',function(data){
-                    var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
+            $.getJSON(baseurl_auth + 'accounts/userdata/?callback=?',function(data){
+                    var slink = baseurl_auth + "accounts/login/?next=".concat(document.URL);
                     if ( data['user']['name'] == "guest"){
-                        var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
+                        var slink = baseurl_auth + "accounts/login/?next=".concat(document.URL);
                         window.location = slink; 
                     }
                     else{
-                        var slink = "http://test.cybercommons.org/accounts/login/?next=".concat(document.URL);
-                        slogout = '! Click <a href="' + slink + '">logout</a> to login as a differnet user.';
-                        $('#auth_message').html("Welcome " + data['user']['name'] + slogout);
+                        var slink = baseurl_auth + "accounts/profile/" 
+                        //logout/?next=".concat(document.URL);
+                        //slogout = '! Click <a href="' + slink + '">logout</a> to logout.';
+                        slogout = '<a href="' + slink + '">' + data['user']['name'] + '</a>!';
+                        $('#auth_message').html("Welcome " + slogout);
                     }    
                     //$('#result_http' ).append(data.html)
+                    historyLoad();
              } );
             //$("#auth_dialog").hide()
             //if ($.cookie('auth_tkt') ) {
@@ -129,8 +207,127 @@ function onReady(){
            // }
 
         }
+    function setLocations(){
+        $.getJSON('http://test.cybercommons.org/model/getLocations?callback=?',function(data){
+                $.each(data.location, function(key,value) {   
+                    $('#AMF_site')
+                        .append($("<option></option>")
+                        .attr("value",value)
+                        .text(value)); 
+                });
+            ready_val= true;
+        });
+    }
+    
+    function loadParams(site){
+        //Site parameter Dialog
+        $( "#siteparam-dialog" ).dialog({
+            autoOpen: false,
+            width:850,
+            async:true,
+            title:"Site Parameters",
+            height:750,
+            modal: true,
+            buttons: {
+                Ok: function() {
+                    //alert('yesyesyes');
+                    $("#siteparam-dialog").dialog("close");
+                }
+            }
+        });
+        $('#siteparam-dialog' ).html('<h1>Loading........</h1>');
+        $.getJSON('http://test.cybercommons.org/model/tecositeparam?site=' + site + '&callback=?',function(data){
+            $('#siteparam-dialog' ).html(data.html);
+        });
+        //Data Dialog
+        $( "#data-dialog" ).dialog({
+            autoOpen: false,
+            width:1010,
+            async:true,
+            title:"Forcing Parameters",
+            height:700,
+            modal: true,
+            buttons: {
+                Ok: function() {
+                    //alert('yesyesyes');
+                    $("#data-dialog").dialog("close");
+                }
+            }
+        });
+        $('#data-dialog' ).html('<h1>Loading........</h1>');
+        $.getJSON('http://test.cybercommons.org/model/tecodata?site=' + site + '&callback=?',function(data){
+            $('#data-dialog' ).html(data.html);
+            setData();
+            $("#runBut").removeAttr("disabled");
+        });
+    }
+    function loadSites(){
+      //  $.getJSON('http://test.cybercommons.org/model/getSite?callback=?',function(data){
+       //        $('#site-dialog' ).html(data.html);
+        //    setData();
+       // });
+        $( "#site-dialog" ).dialog({
+            autoOpen: false,
+            width:1010,
+            async:true,
+            title:"Site Location Map",
+            height:750,
+            modal: true,
+            buttons: {
+                Ok: function() {
+                    //alert('yesyesyes');
+                    $("#site-dialog").dialog("close");
+                }
+            }
+        });
+        //$('#site-dialog').load('map.html');
+        //$.getJSON('http://test.cybercommons.org/model/getSite?callback=?',function(data){
+        //    $('#site-dialog' ).html(data.html);
+        //    setData();
+       // });
+    }
     function historyLoad(){
         $.getJSON('http://test.cybercommons.org/queue/usertasks/cybercomq.model.teco.task.runTeco?callback=?',function(data){
                     $('#history' ).html(data.html)});
     }
+/*    function onPopupClose(evt) {
+        // 'this' is the popup.
+        var feature = this.feature;
+        if (feature.layer) { // The feature is not destroyed
+            selectControl.unselect(feature);
+        } else { // After "moveend" or "refresh" events on POIs layer all 
+             //     features have been destroyed by the Strategy.BBOX
+            this.destroy();
+        }
+    }   
+    function onFeatureSelect(evt) {
+        feature = evt.feature;
+    
+        popup = new OpenLayers.Popup.FramedCloud("featurePopup", feature.geometry.getBounds().getCenterLonLat(), new OpenLayers.Size(100,100),
+                "<b>"+feature.attributes.loc_name + "</b><hr><table>" +
+                "<tr><th>ID</th><td>"+feature.attributes.loc_id + "</td></tr>" +
+                "<tr><th>Type</th><td>"+feature.attributes.loc_purpose + "</td></tr>" +
+                "<tr><th>State</th><td>"+feature.attributes.loc_state + "</td></tr>" +
+                "<tr><th>Country</th><td>"+feature.attributes.loc_county + "</td></tr>" +
+                "<tr><td colspan='2'><a href='"+feature.attributes.site_url + "' target='_blank'>AmeriFlux Site Description</a></td></tr>" +
+                "<tr><td colspan='2'><a href='http://maps.google.com/maps?z=15&t=k&q=loc:"+feature.attributes.lat+","+feature.attributes.lon+"' target='_blank'>Google Maps</a></td></tr></table>" ,
+                null, true, onPopupClose);
+    
+        feature.popup = popup;
+        popup.feature = feature;
+        map.addPopup(popup, true);
+   
+        var id = (feature.attributes.loc_id) ? feature.attributes.loc_id : '';
+        $("#mapinfo").html("<input type='hidden' id='sitesel' value='" + id + "'>" + id);   
+    }
+    function onFeatureUnselect(evt) {
+        feature = evt.feature;
+        if (feature.popup) {
+            popup.feature = null;
+            map.removePopup(feature.popup);
+            feature.popup.destroy();
+            feature.popup = null;
+        }
+    }
+*/
 }

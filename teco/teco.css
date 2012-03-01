@@ -1,15 +1,16 @@
     body,html {margin:5px;padding:0;font-family:sans-serif;}
     #container {width:1012px;margin:auto;border-style:solid;border-width:1px;}
-    #header {padding:5px 10px;text-align:center;padding:2px;indent:2px;}
-    #resultDiv{padding:2px;indent:2px;text-align:center;border-style:solid;border-bottom:1px;}
-    #header1 {padding:2px;indent:2px;text-align:center;border-style:solid;border-bottom:1px;}
+    #header {padding:5px 10px;text-align:center;padding:2px;}
+    #resultDiv{padding:2px;text-align:center;border-style:solid;border-bottom:1px;}
+    #header1 {padding:2px;text-align:center;border-style:solid;border-bottom:1px;}
     #toolbar{text-align:center;}
     #tabs{height:77%;border-style:solid;border-top:1px;}
+    #dialog{font-size:80%;}
     #result_http{padding:10px;}
     #set_input {padding:5px 10px;width:93%;text-align:center;border-style:solid;border-width:5px;background-color:yellow;}
     #run {padding:5px 10px;width:93%;text-align:center;border-style:solid;border-top:0px;border-width:5px;background-color:yellow;}
     #left{float:left;width:40%;border-style:solid;border-left:0px;border-width:1px;}
-    #right{float:right;width:59.9%;border-style:solid;border-right:0px;border-width:1px;}
+    #right{float:right;width:59.6%;border-style:solid;border-right:0px;border-width:1px;}
     h1 {margin:0;font-family:sans-serif,Verdana,Arial,sans-serif;}
     h2 {margin:0 0 1em;}
     h3 {text-align:center;}
@@ -18,3 +19,15 @@
     #cpontent {float:right;width:810px;}
     #aresult{clear:both;padding:2px 2px 20px 2px;}
     #rtabs{height:auto;font-size:95%;}
+    #sortable12,#sortable13, #sortable1, #sortable2 { list-style-type: none; margin: 0; padding: 0; float: left; margin-right: 10px; }
+    #sortable12 li,#sortable13 li,#sortable1 li, #sortable2 li { margin: 0 5px 5px 5px; text-align:center;padding: 5px; font-size: 1.2em; width: 120px; }
+    #sidebar {display:inline;text-align:center;border-style:solid;border-width:5px;background-color:yellow;}
+    #alist {margin-left:40px;}
+    .selector{padding-left:10px;}
+    #fcast{padding-left:10px;}
+    .lowrow{padding:5px;}
+    #opener1{width:227px;margin-top:5px;margin-left:15px;}
+    #AMF_site1{width:225px;margin-left:60px;}
+    #listCont{padding:5px;}
+    #sortable2{margin:10px;margin-left:30px;padding:5px;width:142;}
+    BODY{font-family:sans-serif; }
