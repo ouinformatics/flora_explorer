@@ -226,7 +226,7 @@ function onReady(){
             width:850,
             async:true,
             title:"Site Parameters",
-            height:750,
+            height:800,
             modal: true,
             buttons: {
                 Ok: function() {
