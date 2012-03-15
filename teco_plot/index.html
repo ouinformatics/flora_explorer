@@ -1,6 +1,8 @@
 <html>
     <link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css"
     rel="Stylesheet" />
+    <!--<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css"
+    rel="Stylesheet" />-->
     <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
     <script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.js"></script>
@@ -8,7 +10,7 @@
     
     <body>
         <div id=contain style='width:50%;'>
-            <select id=variable></select>
+            Variable: <select id=variable class='updateOnChange'></select> Aggregate by: <select id=aggregate class="updateOnChange"></select>Method:<select id=agmethod class=updateOnChange></select>
             <div id=plot style="width:100%;height:400px;font-family:sans-serif;"></div>
             <div id=data></div>
             <div id=slider></div>
