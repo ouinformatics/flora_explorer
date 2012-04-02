@@ -23,6 +23,7 @@ function test_auth_tkt() {
         $('#auth_message').html("you're logged in")
     }
     else {
+        $("#auth_dialog").html("In order to keep track of jobs you've requested, please login to the cyberCommons.")
         $("#auth_dialog").dialog( { height:200, modal: true} );
         $("#auth_dialog").dialog("open");
         $('#auth_message').html('Please <a href="http://test.cybercommons.org/accounts/login/">login</a> to track your tasks via the cybercommons').addClass('label warning')
