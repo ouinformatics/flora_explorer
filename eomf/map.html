@@ -1,0 +1,68 @@
+<html>
+
+<head>
+<script type="text/javascript" src="http://static.cybercommons.org/js/OpenLayers-2.10/OpenLayers.js"></script>
+<style type="text/css">
+        #map {
+            width: 512px;
+            height: 225px;
+            border: 1px solid #ccc;
+        }
+</style>
+<script>
+var map, vector;
+
+function init() {
+    
+    map = new OpenLayers.Map('map');
+    var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS", "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'});
+    vectors = new OpenLayers.Layer.Vector("Vector Layer");
+
+    map.addLayers([wms,vectors]);
+    map.addControl(new OpenLayers.Control.MousePosition());
+    map.addControl(new OpenLayers.Control.EditingToolbar(vectors));
+
+    var options = {
+        hover: true,
+        onSelect: serialize
+    };
+
+    var select = new OpenLayers.Control.SelectFeature(vectors, options);
+    map.addControl(select)
+    select.activate();
+
+    map.setCenter(new OpenLayers.LonLat(0,0), 1);
+
+
+}
+
+
+        function serialize(feature) {
+            var type = 'wkt';
+            // second argument for pretty printing (geojson only)
+            var pretty = 1;
+            var out_options = {
+                'internalProjection': map.baseLayer.projection,
+                'externalProjection': new OpenLayers.Projection("EPSG:4326")
+            };
+            var str = new OpenLayers.Format.WKT(out_options).write(feature, pretty);
+            // not a good idea in general, just for this demo
+            str = str.replace(/,/g, ', ');
+            document.getElementById('output').value = str;
+        }
+
+</script>
+
+
+</head>
+
+<body onload="init()">
+<div>
+<div id="map"></div>
+<textarea id="output">This is a text area</textarea>
+</div>
+</body>
+
+
+
+</html>
