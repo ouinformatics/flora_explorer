@@ -5,13 +5,14 @@
 <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
-
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="cctasks.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function(){
 
 function populate_selectors() {
+{{! Fill out the populate selectors JS with each select_source configuration parameter }}
 {{#params}}
     {{#select_source}}
     $.getJSON('{{select_source}}', 
@@ -28,10 +29,12 @@ function populate_selectors() {
 
 populate_selectors();
 
+{{! Look for task's extra JS and run if set }}
 {{#task}}
 {{extrajs}}
 {{/task}}
 
+{{! Run jquery routines from taskui description (ie. datepicker settings) }}
 {{#params}}
 {{#jQuery}}
 $("#{{id}}").{{jQuery}};
@@ -39,6 +42,7 @@ $("#{{id}}").{{jQuery}};
 {{/params}}
 
 
+{{! Set up task description for cctasks.js }}
 {{#task}}
 var taskdesc = {
     "taskname": "{{taskname}}",
