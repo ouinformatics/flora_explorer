@@ -13,14 +13,14 @@
 
 <div class="container">
 <div id=auth_message> </div>
-<div id=auth_dialog>In order to keep track of jobs you've requested, please login to the cyberCommons.</div>
+<div id=auth_dialog></div>
 <div id=ccform style="width:400px;" id="content" class="ui-widget-content ui-corner-all">
 
 <form id="request" class="form-stacked">
 <fieldset>
 <div class="ui-widget-header ui-corner-all" style="padding:2px;indent:2px;">MODIS Product Download</div>
     <label for="product">MODIS Product </label> 
-        <select id=product></select> <br>
+        <select id=product class="dropdown-menu"></select> <br>
     <label for="country">Country </label>
         <select id=country></select> <br>
     <label for="start_date">Start Date</label>
@@ -32,7 +32,7 @@
         <span class="help-block">Enter your email to receive download link via email (Optional)</span>
 
   <div style="float:left;height:3em">
-     <input type="button" name="Submit" value="Submit" class=button style="float:left">
+     <input type="button" name="Submit" value="Submit" class="btn btn-primary" style="float:left">
      <div id="containspinner" style="float:left;width:16px;height:16px">
         <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" /></div>
      </div>
