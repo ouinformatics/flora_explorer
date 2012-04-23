@@ -113,6 +113,10 @@ $(function() {
 				grid: {
 					clickable: true
 				},
+                                legend: { 
+                                    container: $('#legend'),
+                                    noColumns: 5
+                                }
 				//colors: ["rgba(130,181,255,0.7)"]
 			}
 
@@ -159,6 +163,7 @@ $(function() {
 					clickable: true
 				},
 				colors: ["rgba(130,181,255,0.7)"]
+            
 			}
 		};
 		//tecoResults(settings);

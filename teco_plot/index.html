@@ -6,14 +6,59 @@
     <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
     <script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.js"></script>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
     <script type="text/javascript" src="plot.js"></script>
-    
+    <style>
+        #ylabel {
+            -webkit-transform: rotate(-90deg); 
+            -moz-transform: rotate(-90deg);
+            position: relative;
+            height: 50px;
+            width: 100px;
+            top: 300px;
+        }
+        #xlabel {
+            position: relative;
+            left:300px;            
+
+        }
+        #plot {
+            width: 100%;
+            height: 800px;
+        }
+        #legend {
+            
+
+        }
+
+    </style>
     <body>
-        <div id=contain style='width:50%;'>
-            Variable: <select id=variable class='updateOnChange'></select> Aggregate by: <select id=aggregate class="updateOnChange"></select>Method:<select id=agmethod class=updateOnChange></select>
-            <div id=plot style="width:100%;height:400px;font-family:sans-serif;"></div>
-            <div id=data></div>
-            <div id=slider></div>
+        <div class="container">
+            <div id=formcontainer>
+                <form class="well form-inline">
+                   <!-- <label>Variable:</label> -->
+                    <select id=variable class="updateOnChange span2"></select>
+                    <!-- <label>Aggregate by:</label> -->
+                    <select id=aggregate class="updateOnChange span2"></select>
+                    <!--<label>Method:</label>-->
+                    <select id=agmethod class="updateOnChange span2"></select>
+                </form>
+            </div>
+       
+            <div id=plotcontain class="container-fluid span12">
+                    <div class="row show-grid">
+                      <div id=yaxis class="span1" style="height: 800px;"><div id=ylabel>y-SomeUnits</div></div> 
+                      <div class="span11"><div id=plot></div></div>
+                    </div>
+                    <div class="row">
+                        <div id=xlabel class="span11 offset1">SomeUnits</div>
+                    </div>
+                    <div class="row">
+                        <div id=legend class="table-basic floatright"></div>
+                    </div>
+            </div>
+        <div id=data></div>
+        <div id=slider></div>
         </div>
     </body>
 
