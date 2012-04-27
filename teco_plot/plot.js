@@ -14,6 +14,8 @@ jQuery.extend({
 
 $(function() {
 
+        var qs = $.parseQuerystring();
+
 	function serviceFill(settings) {
 		template = settings.service
 		template = template.replace('%db%', settings.db).
@@ -36,7 +38,7 @@ $(function() {
 						label: item.year
 					};
 				}
-				outData[item.year].data.push([item[$('#aggregate').val()], item[$('#agmethod').val()] ]);
+				outData[item.year].data.push([item[$('#aggregate').val()], item[$('#agmethod').val()]]);
 			});
 
 			$.each(outData, function(key, value) {
@@ -46,6 +48,7 @@ $(function() {
 
 		});
 	}
+
 
 	function tecoResults(settings) {
 		var outData = [];
@@ -66,21 +69,37 @@ $(function() {
 		$.getJSON('http://test.cybercommons.org/mongo/db_find/' + settings.db + '/');
 	}
 
-	var tecovar = ['AirSpecificHumu', 'CO2concentratio', 'ET', 'LAI', 'LatentHeat', 'RootMoist', 'Runoff', 'SOM_Miro', 'SOM_Pass', 'SOM_SLOW', 'SoilWater', 'TairPlus273_15', 'Transpiration', 'carbon_Clitter', 'carbon_Flitter', 'carbon_Leaf', 'carbon_Root', 'carbon_Wood', 'carbon_biomass', 'carbon_canopy', 'carbon_soil', 'doy', 'gpp', 'hour', 'nee_observe', 'nee_simulate', 'npp', 'observed_date', 'rain_div_3600', 'resp_auto', 'resp_hetero', 'resp_tot', 'satfrac_1', 'satfrac_10', 'satfrac_2', 'satfrac_3', 'satfrac_4', 'satfrac_5', 'satfrac_6', 'satfrac_7', 'satfrac_8', 'satfrac_9', 'scale_sw', 'soilwater_1', 'soilwater_10', 'soilwater_2', 'soilwater_3', 'soilwater_4', 'soilwater_5', 'soilwater_6', 'soilwater_7', 'soilwater_8', 'soilwater_9', 'task_id', 'year'];
-
-        var aggregates = ['month','week','day'];
-        var agmethods = ['Sum','Avg','count'];
-
 	function populateList(variables, selector) {
 		$.each(variables, function(i, l) {
 			selector.append($("<option/>").val(l).text(l));
 		});
+            	$('#variable>option[value="npp"]').attr('selected', true);
+		$('#agmethod>option[value="Sum"]').attr('selected', true);
+                updateUI();
 	}
 
+	function getmetadata() {
+		var tecovars = [];
+		var units = {};
+		var tecovar = [];
+		$.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/metadata/%7B'spec':%7B'name':%20'TECO%20Model%20Result%20File'%7D,'fields':['variables']%7D?callback=?", function(data) {
+			tecovars = data[0].variables;
+			$.each(tecovars, function(i, v) {
+				units[v.name] = v.unit;
+				tecovar.push(v.name);
+			});
+                    tecovar.sort();
+                    populateList(tecovar,$('#variable'));
+		});
+		return units
+	}
 
-	populateList(tecovar, $('#variable'));
-        populateList(aggregates, $('#aggregate'));
-        populateList(agmethods, $('#agmethod'));
+	var units = getmetadata();
+	var aggregates = ['month', 'week', 'day'];
+	var agmethods = ['Sum', 'Avg', 'count'];
+
+	populateList(aggregates, $('#aggregate'));
+	populateList(agmethods, $('#agmethod'));
 
 	function tecoGroupByResult(task_id, grouping, variable) {
 
@@ -102,7 +121,7 @@ $(function() {
 				//	mode: 'x'
 				//},
 				lines: {
-					show: true 
+					show: true
 				},
 				points: {
 					show: false,
@@ -113,10 +132,10 @@ $(function() {
 				grid: {
 					clickable: true
 				},
-                                legend: { 
-                                    container: $('#legend'),
-                                    noColumns: 5
-                                }
+				legend: {
+					container: $('#legend'),
+					noColumns: 5
+				}
 				//colors: ["rgba(130,181,255,0.7)"]
 			}
 
@@ -163,7 +182,7 @@ $(function() {
 					clickable: true
 				},
 				colors: ["rgba(130,181,255,0.7)"]
-            
+
 			}
 		};
 		//tecoResults(settings);
@@ -198,11 +217,16 @@ $(function() {
 		}));
 	});
 
+	
+
+
 	function updateUI() {
-		
-		tecoGroupBy(tecoGroupByResult(qs.task_id, '["year","'+$('#aggregate').val()+'"]', $('#variable').val()));
+		tecoGroupBy(tecoGroupByResult(qs.task_id, '["year","' + $('#aggregate').val() + '"]', $('#variable').val()));
+                $("#ylabel").html(units[$("#variable").val()]);
+                $("#xlabel").html($("#aggregate").val() + ' number');
 	}
-	var qs = $.parseQuerystring();
+
+        $(window).resize( function() { updateUI(); });
 	var fields = ['observed_date', 'npp'];
 	if (typeof qs.task_id === 'undefined') {
 		$('#plot').html('Please provide a task_id');
@@ -210,9 +234,9 @@ $(function() {
 
 	else {
 		//tecoResult(qs.task_id, 2006, 0, 365, fields);
-		$('#variable>option[value="npp"]').attr('selected',true);
-                $('#agmethod>option[value="Sum"]').attr('selected',true);
-                tecoGroupBy(tecoGroupByResult(qs.task_id, '["year","'+$('#aggregate').val()+'"]', $('#variable').val()));
+		$('#variable>option[value="npp"]').attr('selected', true);
+		$('#agmethod>option[value="Sum"]').attr('selected', true);
+		tecoGroupBy(tecoGroupByResult(qs.task_id, '["year","' + $('#aggregate').val() + '"]', $('#variable').val()));
 		$('.updateOnChange').change(function() {
 			updateUI();
 		});
