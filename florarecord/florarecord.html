@@ -1,0 +1,94 @@
+<html>
+<head>
+
+<script type="text/javascript" src="http://static.cybercommons.org/js/mustache.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.textchange.min.js"></script>
+<link rel="stylesheet" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css">
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+
+<style>
+table td {
+padding: 5px 5px 5px;
+border-top: 0px;
+}
+
+.ui-tabs {
+    font-size: 10px;
+}
+
+.citebtn {
+    padding: 1px 1px 1px;
+}
+</style>
+
+<script>
+jQuery.extend({
+	parseQuerystring: function() {
+		var nvpair = {};
+		var qs = window.location.search.replace('?', '');
+		var pairs = qs.split('&');
+		$.each(pairs, function(i, v) {
+			var pair = v.split('=');
+			nvpair[pair[0]] = pair[1];
+		});
+		return nvpair;
+	}
+});
+
+$(document).ready(function() {
+
+var qs = $.parseQuerystring();
+
+var next = Number(qs.flora) + 1;
+var cite;
+var filldata = {};
+
+dataq = JSON.stringify({spec:{REF_NO:{$gte:Number(qs.flora),$lt:Number(next)}}})
+$.getJSON("http://test.cybercommons.org/mongo/db_find/flora/data/"+dataq, function(data) {
+    filldata.floras = data;
+    filldata.tabid = $.each(filldata.floras, function(i) { filldata.floras[i].tabid = String(filldata.floras[i].REF_NO).replace(".","_");});
+    citeq = JSON.stringify({spec:{label:Number(qs.flora)}});
+    $.getJSON("http://test.cybercommons.org/mongo/db_find/flora/citation/"+citeq, function(data) {
+        filldata.floras[0].citation = data[0].citation;
+        renderTemplate(filldata);
+    });
+    
+});
+
+var renderTemplate = function(filldata) {
+    $('#template').bind('textchange', function() { $('#content').html(Mustache.render($('#template').val(), filldata)); });
+
+    $.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/template/{'spec':{'name':'florarecord'}}", function(template) {
+    template = template[0].template;
+    $('#tabs').html(Mustache.render(template, filldata));
+    $('#template').val(template.page);
+    $('#template').hide();
+    $('#tabs').dblclick(function() {$('#template').show()});
+    $('#tabs').tabs();
+});
+}
+
+});
+
+</script>
+</head>
+<body>
+<div><textarea id="template"></textarea></div>
+
+<div class="well">
+<div class="container-fluid">
+<div class="row">
+  <div id="content" class="span10">
+    <div id="tabs">[Content Goes Here]</div>
+  </div>
+  <div id="map" class="offset6 span6">[Map Goes Here]</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+
+
