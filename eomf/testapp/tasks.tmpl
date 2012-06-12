@@ -1,0 +1,19 @@
+
+<form class="form-stacked">
+    {{#params}}
+        <label for="{{id}}">{{name}}</label>
+          <{{formtag}} {{#type}}type="{{type}}"{{/type}} id="{{id}}" {{#class}}class="{{class}}"{{/class}}></{{formtag}}>
+          {{#help-block}} 
+            <span class="help-block">{{help-block}}</span>
+          {{/help-block}}
+    {{/params}}
+
+<div style="float:left;height:3em">
+    <input type="button" name="Submit" value="Submit" class=button style="float:left">
+    <div id="containspinner" style="float:left;width:16px;height:16px">
+        <div id="spinner" style="float:left;"><img src="spinner.gif" id="img-spinnger" alt="Loading" /></div>
+    </div>
+    <div id="status" class="label success" style="line-height:3em;float:left;"></div>
+</div>
+
+</form>

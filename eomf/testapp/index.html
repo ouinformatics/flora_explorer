@@ -1,0 +1,101 @@
+<html>
+<head>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet" />
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css"/>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/mustache.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.mustache.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="cctasks.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() { 
+
+function populate_selector(param) { 
+    $.getJSON(param.select_source, 
+        function(items) {
+            var obj = $("#" + param.id);
+            $.each(items, function(index,value) {
+                obj.append($("<option/>").val(value[param.select_var]).text(value[param.select_name]));
+            });
+        }
+    );
+    $("#end_date")['datepicker']({ minDate: new Date(2000,2-1,24), maxDate: new Date(),  changeYear: true });
+}
+
+function jquery_settings(task) {
+    $("#"+task.id)['datepicker']({ minDate: new Date(2000,2-1,24), maxDate: new Date(),  changeYear: true });
+}
+
+
+function hide_status() { 
+        $("#spinner").hide();
+        $("#status").hide();
+}
+
+function fill_template(model) {
+        $.get('tasks.tmpl', function(view) {
+            $("#form").append( $.mustache(view, model) );
+        });
+}
+
+function parse_params(data) {
+        $.each(data.params, function(index,value) { 
+            if (value.hasOwnProperty('jQuery')) {
+                 $('#foo').html(JSON.stringify(value))
+                jquery_settings(value);
+            };
+
+            if (value.hasOwnProperty('select_source')) { 
+                populate_selector(value);
+            }
+
+        });
+}
+
+function onJSON(model) {
+
+    fill_template(model);
+    parse_params(model);
+
+}
+
+
+function setupui(taskname) {
+      
+       $.getJSON("http://test.cybercommons.org/mongo/db_find/taskui/description/%7B'spec':%7B'uiname':'" + taskname +"'%7D%7D?callback=?", function(data) {
+          var mydata = data[0];
+          return onJSON(mydata);
+          //fill_template(mydata); 
+          //parse_params(mydata);
+          //$.each(mydata.task, function(index,value) { $.globalEval(value.extrajs); }); 
+        //var taskdesc = { taskname: mydata.task.taskname, taskq: mydata.task.taskq, uiparams: mydata.task.uiparams };
+        //$(".button").click( function() {calltask(taskdesc);} );
+
+        });
+        
+        
+
+
+        
+        
+
+        hide_status();
+
+}
+
+setupui('static.modisdownload'); 
+});
+
+</script>
+</head>
+<body>
+
+<div id="form"></div>
+
+<div id="foo"></div>
+
+</body>
+</html>
