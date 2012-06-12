@@ -1,0 +1,33 @@
+<html>
+<head>
+
+
+<style>
+#editor {
+    position: absolute;
+    width: 600px;
+    height: 500px;
+}
+</style>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.2.min.js"></script>
+<script src="http://static.cybercommons.org/js/ace/ace.js" data-ace-base="/js/ace/" type="text/javascript" charset="utf-8"></script>
+
+<script>
+
+$(document).ready( function() {
+    $.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/template/{'spec':{'name':'florarecord'}}", function(data) {
+        $('#editor').text(data[0].template);
+        var editor = ace.edit("editor");
+    });
+
+    });
+</script>
+
+
+</head>
+<body>
+
+<div id="editor">Something</div>
+
+</body>
+</html>
