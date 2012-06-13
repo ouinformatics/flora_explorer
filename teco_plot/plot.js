@@ -30,6 +30,8 @@ $(function() {
 		var outData = {};
 		var plotData = [];
 		service = serviceFill(settings)
+                csvget = service.replace('callback=?','') + "outtype=csv"
+                $('#downlnk').attr('href', csvget)
 		$.getJSON(service, function(data) {
 			$.each(data, function(i, item) {
 				if (! (item.year in outData)) {
@@ -253,5 +255,6 @@ $(function() {
 
 	}
 
+        
 });
 
