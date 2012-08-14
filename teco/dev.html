@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>TECO Forecasting</title>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="teco.js"></script>
+<script type="text/javascript" src="map.js"></script>
+<script type="text/javascript" src="fileupload.js"></script>
+<link type="text/css" rel="stylesheet" href="http://static.cybercommons.org/css/bootstrp/bootstrap.min.css"/>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link type="text/css" href="teco.css" rel="Stylesheet"/>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet"/>
+<style type="text/css" media="screen, print, projection">
+        #map {margin:0px;min-width:700px;width:100%;min-height:450px;height:95%;border: 1px solid #ccc;}
+        #mapinfo {margin:0px;width:100%;border: 1px solid #ccc;}
+</style>
+<script type="text/javascript" src="http://static.cybercommons.org/js/OpenLayers-2.12/OpenLayers.js"></script>
+<script>
+
+var map, drawControls, selectControl, selectedFeature;
+//var extent = new OpenLayers.Bounds(-178.3125, 6.44921875, -36.6875, 95.55078125);
+var extent = new OpenLayers.Bounds(-100.3125, 25.44921875, -40.6875, 80.55078125);
+$(document).ready(function(){ 
+    initialize_map();
+    onReady();
+});
+
+</script>
+</head>
+<body link="blue" alink="blue" vlink="violet">
+    <div id="siteparam-dialog" ></div>
+    <div id="data-dialog"></div>
+    <div id='container'>
+        <div id='auth_message'> </div>
+        <!--<div id='header' class="ui-widget-header ui-corner-all">
+            <h1> Terrestrial Ecosystem Model (TECO)</h1>
+        </div>-->
+        <div id='newhead' class="ui-widget-header ui-corner-all" style="width:99.5%;">
+            <span style="font-size:34px;color:#404040;"><strong>Terrestrial Ecosystem Model (TECO)</strong></span></div>
+        <div id='right'>
+            <!--<div id='resultDiv' class="ui-widget-header ui-corner-all"><h1>Status</h1></div>table-striped table-condensed
+           <div id="tabs">table-bordered-->
+            <table class="table table-bordered" style="margin-bottom:3px;">
+                <tbody>
+                <tr>
+                    <td>Model</td>
+                    <td colspan="2"> 
+                        <select id='Model' style="width:240px;">
+                            <option value="TECO_f1" >TECO</option>
+                            <option value="DDA">TECO: Dynamic Data Assimilation</option>
+                        </select>
+                        <div id="dafreq" style="float:right;margin-right:10px;">Frequency &nbsp;
+                            <input type="number" id="dda_freq" value="1" style="width:100px;" min="1" /> &nbsp;Hours
+                        </div>
+                    </td>
+                    <td rowspan="4" style="width:33%;">
+                        <div id='resultDiv' class="ui-widget-header ui-corner-all">
+                            <div id='set_status' style="width:100%;">
+                                <span id="cr_stat" style="font-size:24px;color:#404040;"><strong>Status</strong></span> 
+                                                   <!-- <img id="pgif" width="20%" height="18"  src=" ajax-loader.gif">-->
+                            </div>
+                        </div>
+                        <div style="padding:10px;text-align:center;height:50px;font-weight:bold;">
+                            <div id="cur_stat">Task</div>
+                            <div style="text-align:center;"><img id="pgif" width="40%" height="28"  src=" ajax-loader.gif"></div>
+                        </div>
+                        <div id='toolbar'>
+                            <button id ='runBut'  type="button">Run TECO WorkFlow</button>
+                        </div>
+                                        <!--<div id='toolbar' class="ui-widget-header"> <button id ='runBut'  type="button">Run TECO WorkFlow</button></div>-->
+                    </td></tr>
+                <tr><td>Site</td><td> <select id='AMF_site' style="width:240px;"></select></td><td><button id ='siteopener' type="button">Show Site Map</button></td></tr>
+                <tr>
+                    <td>Initialize Data</td>
+                    <td> <input type="text" id="idata" value="(1991,2006)" readonly="readonly" style="margin-left:2px;width:227px;"/></td>
+                    <td><button id ='opener' type="button">Set/Edit Site Parameters</button></td>
+                </tr>
+                <tr>
+                    <td>Forecast  Data</td>
+                    <td><textarea rows="3" cols="5"id="fdata" readonly="readonly" style="width:230px">[]</textarea></td>
+                    <td><button id ='fopener'  type="button">Set/Edit Forcing Parameters</button></td>
+                </tr>
+                <tr id="mw">
+                    <td><input id="mod_weather" type="checkbox"  value="mod_weather" />&nbsp;Modify Weather</td>
+                    <td colspan="3"><input id="mod_w_txt" type="text" style="width:99%" value="{'T_air':[('add',0)]}"/></td>
+                </tr>
+                </tbody>
+            </table>
+           <!-- </div>-->
+        </div>
+        <!--<div id='resultDiv' class="ui-widget-header ui-corner-all">
+            <div id='set_status' style="width:100%;"><span style="font-size:34px;color:#404040;"><strong>Status</strong></span> <img id="pgif" width="20%" height="18"  src=" ajax-loader.gif"></div> </div>-->
+        <div id='left'>
+            <div id='header' class="ui-widget-header  ui-corner-all">
+                <h1>Workflow</h1>
+            </div>
+            <div id='set_input'><h2>Initialize TECO Run</h2>
+                <div id='set_inputSP' style="width:100%;"><img width="80%" height="18"  src=" ajax-loader.gif"></div>
+            </div>
+            <div id='run'><h2>Run TECO Model</h2>
+                <div id='runSP' style="width:100%;"><img width="80%" height="18"  src=" ajax-loader.gif"></div>
+            </div>
+            <div id='toolbar' class="ui-widget-header"> <button id ='runBut'  type="button">Run TECO WorkFlow</button></div>
+        </div>
+            <div id="aresult">
+                <div class="ui-widget-header ui-corner-all" style="padding:2px;indent:2px;">TECO Results</div>
+                <div id='rtabs'>
+                    <ul>
+                        <li><a href="#result_current">Current Results</a></li>
+                        <li><a href="#history">Model Run History</a></li>
+                    </ul>
+                    <div id='result_current' style="padding:0px;">
+                        <div id='result_http'>Please Run Model for Results</div>
+                    </div>
+                    <div id='history'></div>
+                </div>
+            </div>
+    </div>
+    <div id="site-dialog">
+        <div id="map"></div>
+        <div id="mapinfo"></div>
+    </div>
+    <div id="upload-dialog">
+        <form id="form" enctype="multipart/form-data">
+        <div id="container1">
+            <input type="hidden" id="dest" name="dest" value="/static/teco_fileupload/" />
+            <div style="overflow: auto; width: 100%">
+                <div id="first" style="float: left; text-align: left;" >
+                    <h4 style="display:run-in;">Select File:</h4><input id="fileToUpload" class="span12" type="file" name="fileToUpload" onchange="fileSelected(this.form);" />                
+                </div>
+                </br>
+                <div class="span1"></div>
+                <div id=result style="float: left; text-align: left; height: 18px;"></div>
+                <div id=progressbar style="float: left; text-align: left; width: 20%; height: 18px;"></div>
+            </div>
+        </div>
+        </form>
+    </div>
+</body>
+</html>

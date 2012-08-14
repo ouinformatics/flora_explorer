@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Floras Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The Floras of North America project">
+<meta name="author" content="OU CyberCommons">
+
+<LINK REL=StyleSheet HREF="http://test.cybercommons.org/flora/jqui/development-bundle/themes/base/jquery.ui.all.css" TYPE="text/css" TITLE="Bootstrap" MEDIA="screen, print">
+<LINK REL=StyleSheet HREF="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" TYPE="text/css" TITLE="Bootstrap" MEDIA="screen, print">
+<LINK REL=StyleSheet HREF="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" TYPE="text/css" TITLE="Bootstrap" MEDIA="screen, print">
+<LINK REL=StyleSheet HREF="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" TYPE="text/css" TITLE="Bootstrap-CyberCommons" MEDIA="screen, print">
+
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://test.cybercommons.org/flora/OpenLayers-2.11/OpenLayers.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.selection.min.js"></script>
+<script type="text/javascript" src="http://test.cybercommons.org/flora/flotlabels/jquery.flot.axislabels.js"></script>
+
+<script type="text/javascript" src="flora.js"></script>
+
+<style type="text/css" media="screen, print, projection">
+body {	padding-top: 50px;}
+#map {	height: 700px;}
+</style>
+
+</head>
+<body>
+
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner" style="background: #1A5A80;">
+			<div class="container-fluid">
+				<a class="brand" href="#" onclick="window.location.reload();" style="color: white;">Floras Explorer</a>
+
+				<div class="nav-collapse">
+					<ul class="nav">
+						<li><a href="#" onclick="window.location.reload();">Home</a></li>
+						<li><a data-toggle="modal" href="#about">About</a></li>
+						<li><a data-toggle="modal" href="#contact">Contact</a></li>
+						<li><a data-toggle="modal" href="#help">Help</a></li>
+					</ul>
+				</div>
+
+				<ul class="nav pull-right">
+					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In <b class="caret"></b></a>
+						<div class="dropdown-menu">
+							<form action="" id="form_login" style="margin: 0; padding: 3px 15px" accept-charset="utf-8" method="post">
+								<fieldset class="control-group">
+									<label for="form_username" class="control-label">Username</label>
+									<div class="input-prepend" style="white-space: nowrap">
+										<span class="add-on"><i class="icon-user"></i></span><input type="username" name="username" id="form_username" autocomplete="on" class="span2">
+									</div>
+								</fieldset>
+								<fieldset class="control-group">
+									<label for="form_password" class="control-label">Password</label>
+									<div class="input-prepend" style="white-space: nowrap">
+										<span class="add-on"><i class="icon-lock"></i></span><input type="password" name="password" id="form_password" class="span2">
+									</div>
+								</fieldset>
+								<label class="checkbox"> <input type="checkbox" name="remember" value="true"> Remember me
+								</label>
+								<p class="navbar-text">
+									<button type="submit" class="btn btn-primary">Login</button>
+								</p>
+							</form>
+						</div></li>
+				</ul>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span1">&nbsp;</div>
+			<div class="span2">
+				<div class="well sidebar-nav">
+					<ul class="nav nav-list">
+						<li class="nav-header">Search Options</li>
+						<li class="divider"></li>
+					</ul>
+
+					<div class="accordion" id="accordion2">
+						<div class="accordion-group">
+							<div class="accordion-heading">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordState"> State or Province </a>
+							</div>
+							<div id="accordState" class="accordion-body collapse">
+								<div class="accordion-inner">
+									<select id="idstate" class="span9" multiple="multiple" size="5">
+										<option value="" selected> = Select =</option>
+									</select> <input id="searchState" class="btn btn-info" type="button" value="Search" />
+								</div>
+							</div>
+						</div>
+						<div class="accordion-group">
+							<div class="accordion-heading">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordText"> Text </a>
+							</div>
+							<div id="accordText" class="accordion-body collapse">
+								<div class="accordion-inner">
+									<input id="txtsrch" type="text" class="span12" placeholder=" enter search..."> <input id="searchText" class="btn btn-info" type="button" value="Search" />
+								</div>
+							</div>
+						</div>
+						<div class="accordion-group">
+							<div class="accordion-heading">
+								<a id="advWin" class="accordion-toggle" href="#advance"> Advanced </a>
+							</div>
+						</div>
+					</div>
+
+					<img src="http://test.cybercommons.org/flora/FloraS.gif" alt="Floras Explorer" />
+
+				</div>
+				<div class="well alert-success">
+					<div id="totmsg"></div>
+					<div id="msg"></div>
+				</div>
+				
+				<div class="accordion" id="selAccordion"></div>
+
+			</div>
+
+			<div class="span8">
+				<div class="well">
+					<input id="box" type="checkbox" onchange="selbox()" /> Select Sites
+					<div id="map" class="smallmap"></div>
+				</div>
+			</div>
+		</div>
+
+		<hr>
+
+		<footer>
+			<p>&copy; Cybercommons 2012</p>
+		</footer>
+
+	</div>
+
+	<div class="modal hide" id="about">
+		<div class="modal-header well">
+			<button class="close" data-dismiss="modal">&times;</button>
+			<h2>About Floras Explorer</h2>
+			<h4>Version: 2.1  5 June 2012</h4>
+		</div>
+		<div class="modal-body">
+
+			<h3>The Floras of North America project</h3>
+			<h4>
+				<a href="http://botany.okstate.edu/people_research/Palmer/index.html" target="_blank">Michael Palmer</a>, Department of Botany, Oklahoma State University
+			</h4>
+
+			<br>
+			<p>Botanists and Ecologists in North America have a rich tradition of writing Floras, or lists of vascular plants. The potential of using these floras as baselines for understanding patterns
+				of, and threats to, modern biodiversity cannot be overstated. Nevertheless, floristic work is often published in obscure sources and is very difficult for biodiversity stakeholders to obtain.
+				Although information technology and data transfer amongst scientists are both growing by leaps and bounds, floras are largely confined to dusty shelves.</p>
+
+			<p>Imagine how biodiversity research could be facilitated if there was a georeferenced, easily accessible database that allows scientists to access raw floristic data from thousands of
+				locations at many orders of magnitude of spatial scale and over time spans of decades. Although this might not be considered a high-tech 'sensor', it would allow us to ask basic macroecological
+				questions as well as vital applied concerns. If integrated with current biotic inventories, it could be a part of a continent-wide 'biodiversity observatory'.</p>
+
+			<h4>Collaborators:</h4>
+			Michael Denslow (Appalachian State University)<br> Leticia Dadalt (OSU Botany)<br> Peter Earls (OSU Botany)<br> Mark Withers (University of Georgia)<br> Paul Neal (University of
+			the Natal)<br> Hong Qian (Illinois State Museum)<br> Channing Richardson (OSU Botany)<br> Peter White (UNC Chapel Hill)<br> Gary Wade (USDA Forest Service, Burlington)<br>
+
+			<br>
+			<h4>Acknowledgments</h4>
+			<p>Akbar Syed, Alan Weakley, Ashley Peters, Bill Lehman, Bruce Connery, Bruce Hoagland, Bruce Sorrie, Carolyn Klink, Catherine Hovanic, Daniel McGlinn, Daniel Spaulding, David Maxwell, Donna
+				Ford-Werntz, Garrett Crow, Gary Wade, Glen Rink, Hong Qian, Jason Fridley, Jim Hull, John Hayden, Karen Ray, Kathryn Mauz, Kelly Allred, Kiyoshi Sasaki, Kristin Kegler, Kyanna Cherry, Lorna
+				Lawrence, Louis Iverson, Mac Alford, Mark Withers, Martin Zocher, Michael Denslow, Michael MacRoberts, Neil Snow, Peter, Nick Rasmussen, P.K. Work, Paul Neal, Paula Shryock, Peter Earls, Peter
+				White, Richard Mitchell, Ronald Hartman, Ronald Tyrl, Sandra Peterson, Sandrine Casanova, Sariah Tolsma, Sophonia Roe, Stephanie Glenn, Steve McLaughlin, Steven Hill, Steven Hull, Tatsuro Yamada,
+				Will Lowry and numerous botanists U.S. Forest Service, Oklahoma Water Resources Center, Oklahoma EPSCoR, LIBRA, LUHNA project, OSU Interlibrary Services, Botanical Research Institute of Texas,
+				Houston Advanced Research Center, National Biological Information Infrastructure</p>
+
+
+			<h3>Goals of the Floras of North America Project</h3>
+
+			<p>
+				1) <i>Assemble a bibliography of floristic work</i>. This bibliography will be of great value to botanists beginning new work, and will eventually be able to be queried geographically. For
+				example, one could ask:
+			</p>
+
+			<ul>
+				<li>Has a flora ever been written for this location?</li>
+				<li>What is the most recent flora written for an area within 50km of here?</li>
+				<li>What are the best, and least well-studied parts of the continent?</li>
+				<li>Who is the most prolific botanist in writing floras?</li>
+				<li>How many state parks in my state have been studied floristically?</li>
+				<li>What is the oldest floristic work in my region?</li>
+			</ul>
+
+			<p>
+				2) <i>Develop predictive models for species richness</i>. We are using our data set to develop regression models to predict how many species 'should' occur in a given region. Using such models as
+				a standard, we can evaluate whether a region of interest is particularly rich or poor in species. This can be used to prioritize areas for conservation, or to identify areas that may have been
+				inadequately explored. We also plan to use such predictive models to map patterns of the diversity of vascular plants in North America.
+			</p>
+
+			<p>
+				3) <i>Address basic questions in macroecology</i>. A number of interesting questions have frequented the pages of ecology and biogeography journals recently, that can be readily tested using our
+				data set. For example: - Is the species-area curve triphasic? - Is the latitudinal gradient more closely linked to climatic or historic factors? (e.g. time since last glaciation) - Are patterns of
+				species richness scale-dependent? - Do different levels in the taxonomic hierarchy (e.g. subspecies, species, genera, families) behave similarly?
+			</p>
+
+			<p>
+				4) <i>Understand patterns of exotic invasion</i>. Exotic species are not randomly distributed throughout the continent. We plan to use our data set to map patterns of exotic diversity, and to
+				determine the degree to which it is correlated with native diversity. We also plan to assess other correlates of exotic diversity, including those related to human impact. We can also use our
+				predictive models to identify regions that are relatively pristine with respect to exotic invaders.
+			</p>
+
+			Some publications resulting from this project:<br>
+			<p>
+				Denslow MW, Palmer MW, Murrell ZE. 2010. Patterns of native and exotic vascular plant richness along an elevational gradient from sea level to the summit of the Appalachian Mountains, USA. Journal
+				of the Torrey Botanical Society 137: 67-80. <br> 2010. A bibliography of North Carolina local floras. Castanea 75: 475-483.
+			</p>
+			<p>Fridley JD, Qian H, White PS, Palmer MW. 2006. Plant species invasions along the latitudinal gradient in the United States: comment. Ecology 87: 3209-3213.</p>
+			<p>
+				Palmer MW. 1995. How should one count species? Natural Areas Journal 15: 124-135. <br> 2005. Temporal trends of exotic species richness in North American floras: an overview. EcoScience 12:
+				386-390. <br> 2006. Scale dependence of native and alien species richness in North American floras. Preslia 78: 427-436. <br> 2007. Species-area curves and the geometry of nature. Pages
+				15-31 in Storch D, Marquet PA, Brown JH, eds. Scaling Biodiversity. Cambridge: Cambridge University Press.
+			</p>
+			<p>Palmer MW. 2007. Vascular Plant Checklists from Oklahoma. Oklahoma Native Plant Record 7: 67-77.</p>
+			<p>Palmer MW. 2007. The vascular flora of the Tallgrass Prairie Preserve, Osage County, Oklahoma. Castanea 72: 235-246.</p>
+			<p>Palmer MW, Richardson JC. 2012. Biodiversity Data in the Information Age: Do 21st Century Floras Make the Grade? Castanea 77: 46-59.</p>
+			<p>Palmer MW, Wade GL, Neal PR. 1995. Standards for the writing of floras. BioScience 45: 339-345.</p>
+			<p>Palmer MW, Fridley JD, McGlinn DJ. 2008. Artifacts and Artifictions in Biodiversity Research. Folia Geobotanica 43: 245-257.</p>
+			<p>Qian H, Fridley JD, Palmer MW. 2007. The latitudinal gradient of species-area relationships for vascular plants of North America. American Naturalist 170: 690-701.</p>
+			<p>Withers MA, Palmer MW, Wade GL, White PS, Neal PR. 1998. Changing patterns in the number of species in North American floras. Pages 23-32 in Sisk TD, ed. Perspectives on the Land-Use History
+				of North America: A Context for Understanding our Changing Environment. BSR/BDR-1998-0003: USGS, Biological Resources Division.</p>
+
+		</div>
+	</div>
+
+	<div class="modal hide" id="contact">
+		<div class="modal-header well">
+			<button class="close" data-dismiss="modal">x</button>
+			<h3>Contact</h3>
+		</div>
+		<div class="modal-body">
+			<p>Cybercommons</p>
+		</div>
+	</div>
+
+	<div class="modal hide" id="help">
+		<div class="modal-header well">
+			<button class="close" data-dismiss="modal">x</button>
+			<h3>How To Use Floras Explorer</h3>
+		</div>
+		<div class="modal-body">
+			<p>Home</p>
+			<p>About</p>
+			<p>Contact</p>
+			<p>Search Options</p>
+			<p>State Search</p>
+			<p>Text Search</p>
+			<p>Advanced Search</p>
+		</div>
+	</div>
+
+
+	<div id="advance" title="Advanced Search Options">
+		<p>Search state</p>
+		<p>Search test</p>
+		<p>Search species</p>
+		<p>Search year</p>
+	</div>
+
+	<div id="selinfo">
+		<table id="sites" class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr class="ui-widget-header">
+					<th>REF NO</th>
+					<th>SITENAME</th>
+					<th>YEAR</th>
+					<th>AREA</th>
+					<th>TAXON</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+
+	<div id="siteinfo"></div>
+	<div id="plotinfo">
+		<div id="plot" style="width:800px; height:450px;"></div>
+	</div>
+	<div id="downinfo"></div>
+</body>
+</html>

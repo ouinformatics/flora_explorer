@@ -49,6 +49,10 @@
         selectControl = new OpenLayers.Control.SelectFeature(tecoLayer);
         map.addControl(selectControl);
         selectControl.activate();
+        //map.addControl( new OpenLayers.Control.MousePosition({emptyString:"TECO Site Selector"} ) );
+        //map.addControl( new OpenLayers.Control.LayerSwitcher() );
+        //map.addControl( new OpenLayers.Control.ScaleLine() );
+        //map.addControl( new OpenLayers.Control.OverviewMap());
         tecoLayer.events.on({
             'featureselected': onFeatureSelect,
             'featureunselected': onFeatureUnselect

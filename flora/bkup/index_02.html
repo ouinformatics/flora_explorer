@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>FloraS of North America</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/OpenLayers-2.10/OpenLayers.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.selection.min.js"></script>
+
+<style type="text/css" media="screen, print, projection"> 
+	body,html {margin:0;padding:0;}
+	#container {width:1012px;margin:0 auto;}
+	#header {padding:5px 10px;text-align:center;}
+	h1 {margin:0;font-family:Verdana,Arial,sans-serif;}
+	h2 {margin:0 0 1em;}
+	h3 {text-align:center;}
+	h4 {text-align:right;}
+	.hs {text-align:center;font-size:8pt;font-weight:bold;}
+	#leftnav {float:left;width:200px;border:1px solid gray;font-family:Verdana,Arial,sans-serif;}
+	#content {float:right;width:810px;}
+	
+	#maptab {margin:0px;width:801px;height:451px;padding:1px;}
+	#plottab {margin:0px;width:801px;height:460px;padding:1px;}
+	#modeltab {margin:0px;width:801px;padding:1px;}
+	#map {margin:0px;width:800px;height:450px;}
+	#plot {margin:0px;width:800px;height:450px;}
+	
+	div#mapresults {width:801px;height:451px;margin:20px 0;overflow:auto;}
+	div#mapresults table {margin:1em 0;border-collapse:collapse;width:100%;}
+	div#mapresults table td, div#mapresults table th {border:1px solid #eee;text-align:left;}
+	div#modelresults {width:801px;margin:20px 0;}
+	div#modelresults table {margin:1em 0;border-collapse:collapse;width:100%;}
+	div#modelresults table td, div#modelresults table th {border:1px solid #eee;text-align:left;}
+	
+</style> 
+
+<script>
+var floradata=[];
+var map, wms, floraLayer, drawControls;
+var totsites=[], selsites=[], plot_data=[], selplot_data=[], plotDesc=[], plotselDesc=[];
+var states = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District/Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","ALB":"Alberta","BCL":"British Columbia","CAN":"Canada","MAN":"Manitoba","NB":"New Brunswick","NFL":"Newfoundland","NS":"Nova Scotia","NWT":"Northwest Territories","ONT":"Ontario","PEI":"Prince Edward Island","QUE":"Quebec","SAS":"Saskatchewan","SPM":"Saint Pierre et Miquelon","YUK":"Yukon"};
+var extent = new OpenLayers.Bounds(-178.3125, 6.44921875, -37.6875, 85.55078125);
+
+//on window load
+$(window).load(function() {
+	$("#mapresults").hide();
+
+    map = new OpenLayers.Map('map', { restrictedExtent: extent } );
+	wms = new OpenLayers.Layer.WMS( "OpenLayers WMS","http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
+    map.addLayer(wms);
+    map.zoomToExtent(extent);
+
+	var myStyles = new OpenLayers.StyleMap({
+        "default": new OpenLayers.Style({ fillOpacity: 1, pointRadius: 4, strokeWidth: 1, fillColor: "green", graphicZIndex: 1 }),
+        "select": new OpenLayers.Style({ fillOpacity: 1, fillColor: "red", graphicZIndex: 2 })
+    });
+    floraLayer = new OpenLayers.Layer.Vector("Flora Sites", {styleMap: myStyles});
+    
+	$("#mapinfo").html("<hr>Loading . . .");
+	var st=[],points=[],lon=[],lat=[];
+	$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/data/{"fields":{"REF_NO":1,"Sitename":1,"State":1,"Year":1,"midlat":1,"midlon":1,"NO_Species":1,"Area_hectares":1}}?callback=?', function(fdata) {
+		$.each(fdata, function(key,val) {
+			floradata.push(val);
+			
+			var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+			lon.push(val.midlon);
+			lat.push(val.midlat);
+	      	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+	      	points.push(pointFeature);
+	      	totsites.push(val.REF_NO);
+	      	
+			$.each(val.State, function(skey,sval) {
+				if (sval && $.inArray(sval, st)===-1) {
+					st.push(sval);
+				}
+			});
+		});
+		
+		document.getElementById("box").checked=true;
+		drawControls.select.activate();
+		
+		$.each(st.sort(), function(key, val) {
+			$('#idstate').append('<option value='+val+'>'+states[val]+'</option>');
+		});
+		
+		floraLayer.destroyFeatures();
+		if (checkIEversion() > 0) {
+			floraLayer.addFeatures(points);
+			$("#mapinfo").html("<hr>Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b><hr>");
+		}else{
+			//IE<9 has problems with addFeatures
+			$("#mapinfo").html("<hr>Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b>&nbsp;&nbsp;&nbsp;NOTE: IE version < 9 <hr>");
+		}
+
+	}); //end getJSON
+
+	map.addLayer(floraLayer);
+	
+    var mpos = new OpenLayers.Control.MousePosition();
+    map.addControl(mpos);
+
+	drawControls = {select: new OpenLayers.Control.SelectFeature( floraLayer, { box: true, multipleKey: "shiftKey", toggleKey: "ctrlKey" } ) };
+	map.addControl(drawControls.select);
+	
+	floraLayer.events.on({
+		featureselected: function(event) {
+			var feature = event.feature;
+			selsites.push(feature.attributes.REF_NO);
+			$('#mapresults').show();
+			$( "#sites tbody" ).append( "<tr>" + 
+				"<td>" + feature.attributes.REF_NO + "</td>" + 
+				"<td><a href='http://fire.rccc.ou.edu/flora/"+parseInt(feature.attributes.REF_NO)+"' target='_blank'>" + feature.attributes.Sitename + "</a></td>" + "</tr>"
+			); 
+
+			$("#mapinfo").html("Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b>");
+        }, 
+        
+		featureunselected: function() {
+			clearmapresults ();
+        }
+    });		
+	
+}); //end window Load
+
+//Search functions==============================================================================================================================================================
+//draw selected year
+function searchYear (yrFrom,yrTo) {
+	totsites=[];
+	$("#mapinfo").html("<hr>Loading Year");
+
+	var currentYear = (new Date).getFullYear();
+	if (yrFrom=='') {yrFrom=0;}
+	if (yrTo=='') {yrTo=currentYear;}
+
+	$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/data/{"spec":{"Year":{"$gte":'+yrFrom+',"$lte":'+yrTo+'}},"fields":{"REF_NO":1,"Sitename":1,"midlon":1,"midlat":1}}?callback=?', function(floradata) {
+		var points=[], lon=[], lat=[];
+		$.each(floradata, function(key,val) {
+			var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+			lon.push(val.midlon);
+			lat.push(val.midlat);
+          	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+          	points.push(pointFeature);
+          	totsites.push(val.REF_NO);
+		}); 
+		if (totsites.length > 0) {
+			var lonmax = Math.max.apply( null, lon );
+			var latmax = Math.max.apply( null, lat );
+			var lonmin = Math.min.apply( null, lon );
+			var latmin = Math.min.apply( null, lat );
+			bounds = new OpenLayers.Bounds();
+			bounds.extend(new OpenLayers.LonLat(lonmax,latmax));
+			bounds.extend(new OpenLayers.LonLat(lonmin,latmin));
+			map.zoomToExtent(bounds);
+			
+			floraLayer.destroyFeatures();
+			floraLayer.addFeatures(points);
+		}
+		
+		clearmapresults ("Year from <b>"+yrFrom+"</b> to <b>"+yrTo+"</b>");
+	});
+}
+
+//draw selected species
+function searchSpecies (species) {
+	totsites=[];
+	$("#mapinfo").html("<hr>Loading Species");
+	var sfnd='',msg='';
+	if (species==1) {sfnd='"$lte":99';msg="Species less than <b>99</b>";}
+	if (species==2) {sfnd='"$gte":100,"$lte":499';msg="Species between <b>100</b> and <b>499</b>";}
+	if (species==3) {sfnd='"$gte":500,"$lte":999';msg="Species between <b>500</b> and <b>999</b>";}
+	if (species==4) {sfnd='"$gte":1000';msg="Species greater than <b>1000</b>";}
+	$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/data/{"spec":{"NO_Species":{'+sfnd+'}},"fields":{"REF_NO":1,"Sitename":1,"midlon":1,"midlat":1}}?callback=?', function(floradata) {
+		var points=[], lon=[], lat=[];
+		$.each(floradata, function(key,val) {
+			var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+			lon.push(val.midlon);
+			lat.push(val.midlat);
+          	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+          	points.push(pointFeature);
+          	totsites.push(val.REF_NO);
+		}); 
+		if (totsites.length > 0) {
+			var lonmax = Math.max.apply( null, lon );
+			var latmax = Math.max.apply( null, lat );
+			var lonmin = Math.min.apply( null, lon );
+			var latmin = Math.min.apply( null, lat );
+			bounds = new OpenLayers.Bounds();
+			bounds.extend(new OpenLayers.LonLat(lonmax,latmax));
+			bounds.extend(new OpenLayers.LonLat(lonmin,latmin));
+			map.zoomToExtent(bounds);
+			
+			floraLayer.destroyFeatures();
+			floraLayer.addFeatures(points);
+		}
+		clearmapresults (msg);
+	});
+}
+
+//draw selected states
+function searchState (states) {
+	totsites=[];
+	$("#mapinfo").html("<hr>Loading States");	
+	$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/data/{"spec":{"State":{"$in":['+states+']}},"fields":{"REF_NO":1,"Sitename":1,"midlon":1,"midlat":1}}?callback=?', function(floradata) {
+		var points=[], lon=[], lat=[];
+		$.each(floradata, function(key,val) {
+			var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+			lon.push(val.midlon);
+			lat.push(val.midlat);
+          	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+          	points.push(pointFeature);
+          	totsites.push(val.REF_NO);
+		}); 
+		var lonmax = Math.max.apply( null, lon );
+		var latmax = Math.max.apply( null, lat );
+		var lonmin = Math.min.apply( null, lon );
+		var latmin = Math.min.apply( null, lat );
+		bounds = new OpenLayers.Bounds();
+		bounds.extend(new OpenLayers.LonLat(lonmax,latmax));
+		bounds.extend(new OpenLayers.LonLat(lonmin,latmin));
+		map.zoomToExtent(bounds);
+		
+		floraLayer.destroyFeatures();
+		floraLayer.addFeatures(points);
+		
+		clearmapresults ("States: "+states);
+	});
+}
+
+//draw selected text search
+function searchText (txtsrch) {
+	totsites=[];
+	$("#mapinfo").html("<hr>Loading Text Search");	
+	if (IsNumeric(txtsrch)) {
+		//search REF_NO
+		var points=[], lon=[], lat=[];
+		$.each(floradata, function(key,val) {
+			if (txtsrch==val.REF_NO) {
+				var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+				lon.push(val.midlon);
+				lat.push(val.midlat);
+	          	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+	          	points.push(pointFeature);
+	          	totsites.push(val.REF_NO);
+			}
+		});
+		if (totsites.length) {
+			var lonmax = Math.max.apply( null, lon );
+			var latmax = Math.max.apply( null, lat );
+			var lonmin = Math.min.apply( null, lon );
+			var latmin = Math.min.apply( null, lat );
+			bounds = new OpenLayers.Bounds();
+			bounds.extend(new OpenLayers.LonLat(lonmax,latmax));
+			bounds.extend(new OpenLayers.LonLat(lonmin,latmin));
+			map.zoomToExtent(bounds);
+			
+			floraLayer.destroyFeatures();
+			floraLayer.addFeatures(points);
+			clearmapresults ("Search: "+txtsrch);	
+		}else{
+			//not found
+			clearmapresults ("Search Not Found: "+txtsrch);
+		}
+	}else{
+		//search text
+		$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/data/{"spec":{"Sitename":{"$regex":"'+txtsrch+'","$options":"i"}},"fields":{"REF_NO":1,"Sitename":1,"midlon":1,"midlat":1}}?callback=?', function(floradata) {
+			var points=[], lon=[], lat=[];
+			$.each(floradata, function(key,val) {
+				var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.midlon, val.midlat));
+				lon.push(val.midlon);
+				lat.push(val.midlat);
+	          	pointFeature.attributes = {"REF_NO": val.REF_NO, "Sitename": val.Sitename};
+	          	points.push(pointFeature);
+	          	totsites.push(val.REF_NO);
+			});
+			if (totsites.length) {
+				var lonmax = Math.max.apply( null, lon );
+				var latmax = Math.max.apply( null, lat );
+				var lonmin = Math.min.apply( null, lon );
+				var latmin = Math.min.apply( null, lat );
+				bounds = new OpenLayers.Bounds();
+				bounds.extend(new OpenLayers.LonLat(lonmax,latmax));
+				bounds.extend(new OpenLayers.LonLat(lonmin,latmin));
+				map.zoomToExtent(bounds);
+				
+				floraLayer.destroyFeatures();
+				floraLayer.addFeatures(points);
+				clearmapresults ("Search: "+txtsrch);	
+			}else{
+				//not found
+				clearmapresults ("Search Not Found: "+txtsrch);
+			}
+		});
+	}
+}
+
+//jquery load ready ==============================================================================================================================================================
+$(document).ready(function() {
+	$( "#tabs" ).tabs({	ajaxOptions: { error: function( xhr, status, index, anchor ) {	$( anchor.hash ).html("Info will be loaded." );	} }	});		
+	
+	$("#tabs").bind("tabsselect", function(event, ui) {
+		if (ui.index==1) {loadPlot();}	//plot
+		if (ui.index==2) {$("#model tbody").empty();loadModel ();} //model
+	});
+	
+//    $("#plot").bind("plotclick", function (event, pos, item) {
+//        if (item) {
+//        	if (item.seriesIndex==0) {
+//            	$("#plotresults").html("ID: "+plotDesc[item.dataIndex].REF_NO+"&nbsp;&nbsp; <a href='http://fire.rccc.ou.edu/flora/"+parseInt(plotDesc[item.dataIndex].REF_NO)+"' target='_blank'>"+plotDesc[item.dataIndex].Sitename+"</a><br>");
+//        	}
+//        	if (item.seriesIndex==1) {
+//            	$("#plotresults").html("ID: "+plotselDesc[item.dataIndex].REF_NO+"&nbsp;&nbsp; <a href='http://fire.rccc.ou.edu/flora/"+parseInt(plotselDesc[item.dataIndex].REF_NO)+"' target='_blank'>"+plotselDesc[item.dataIndex].Sitename+"</a><br>");
+//        	}
+//            plot.highlight(item.series, item.datapoint);
+//        }
+//    });
+    
+    var previousPoint = null;
+    $("#plot").bind("plothover", function (event, pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
+
+        if (item) {
+            if (previousPoint != item.dataIndex) {
+                previousPoint = item.dataIndex;
+                
+                $("#tooltip").remove();
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1].toFixed(2);
+                
+                var msg='';
+            	if (item.seriesIndex==0) {
+            		msg=plotDesc[item.dataIndex].REF_NO+" "+plotDesc[item.dataIndex].Sitename;
+            	}
+            	if (item.seriesIndex==1) {
+            		msg=plotselDesc[item.dataIndex].REF_NO+" "+plotselDesc[item.dataIndex].Sitename;
+            	}
+            	showTooltip(item.pageX, item.pageY, msg);
+            }
+        }
+        else {
+            $("#tooltip").remove();
+            previousPoint = null;            
+        }
+    });
+
+    function getData(x1, x2, y1, y2) {
+    	var psel=[];
+    	$.each(selplot_data, function(i, val) { 
+    		if ( ((x1 <= val[0]) && (x2 >= val[0])) && ((y1 <= val[1]) && (y2 >= val[1])) ) {
+    			psel.push(plotselDesc[i].REF_NO+" "+plotselDesc[i].Sitename);
+    		}
+    	});
+    	$.each(plot_data, function(i, val) { 
+    		if ( ((x1 <= val[0]) && (x2 >= val[0])) && ((y1 <= val[1]) && (y2 >= val[1])) ) {
+    			if (jQuery.inArray(plotDesc[i].REF_NO+" "+plotDesc[i].Sitename, psel) < 0) {
+    				psel.push(plotDesc[i].REF_NO+" "+plotDesc[i].Sitename);
+    			}
+    		}
+    	});
+    	$.each(psel, function(i, val) { 
+    		$("#plotresults").append(val+"<br>");
+    	});
+    	
+    }
+    
+    $("#plot").bind("plotselected", function (event, ranges) {
+    	$("#plotresults").empty();
+        getData(ranges.xaxis.from, ranges.xaxis.to, ranges.yaxis.from, ranges.yaxis.to);
+    });
+	
+    $("#frmyear").change( function() {
+    	var fy=$.trim($(this).val());
+       	if (fy) {
+       		if (IsNumeric(fy)) {
+       			document.getElementById("yrbox").checked=true;
+       			$(this).val(fy);
+       		}else{
+       			alert("From Year must be numeric!");
+       			$(this).val('');
+       		}
+       	}else{
+       		if (! $.trim($("#toyear").val())) {
+       			document.getElementById("yrbox").checked=false;
+       		}
+       	}    		
+    });
+    $("#toyear").change( function() {
+    	var ty=$.trim($(this).val());
+       	if (ty) {
+       		if (IsNumeric(ty)) {
+       			if ($("#frmyear").val()) {
+       				if ( $("#frmyear").val() && ($("#frmyear").val() <= ty) ) {
+           				document.getElementById("yrbox").checked=true; 
+           				$(this).val(ty);
+           			}else{
+           				alert("From Year is less than To year!");
+           				$(this).val('');
+           			}
+       			}else{
+       				document.getElementById("yrbox").checked=true;
+       				$(this).val(ty);
+       			}
+       		}else{
+       			alert("To Year must be numeric!");
+       			$(this).val('');
+       		}
+       	}else{
+       		if (! $.trim($("#frmyear").val())) {
+       			document.getElementById("yrbox").checked=false;
+       		}
+       	}    		
+    });
+    
+    $("#idspecies").change( function() {
+    	document.getElementById("spbox").checked= ($(this).val()) ? true : false;
+    });
+    
+    $("#idstate").change( function() {
+    	var stvals = $("#idstate").val() || [];
+    	document.getElementById("stbox").checked= (stvals[0]) ? true : false;
+    });
+    
+    $("#txtsrch").change( function() {
+    	var ts=$.trim($(this).val());
+    	if (ts) {
+    		document.getElementById("txtbox").checked=true;
+    	}else{
+    		document.getElementById("txtbox").checked=false;
+    	}
+    	$(this).val(ts);
+    });
+    
+	//search 
+    $('#search').click(function() {
+    	
+    	if ($('#yrbox').attr('checked')) {
+	    	searchYear($("#frmyear").val(),$("#toyear").val());
+    	}
+    	
+    	if ($('#spbox').attr('checked')) {
+    		var selSpecies = $("#idspecies").val();
+    		searchSpecies(selSpecies);
+    	}
+    	
+    	if ($('#stbox').attr('checked')) {
+	    	var selStates = $("#idstate").val() || [];
+	    	var states=[];
+	    	$.each(selStates, function(key, value) {
+	    		states.push('"'+value+'"');
+	    	});
+	    	searchState(states);
+    	}
+    	
+    	if ($('#txtbox').attr('checked')) {
+    		searchText($("#txtsrch").val());
+    	}
+    	
+    });
+	
+});	
+
+//functions ==============================================================================================================================================================
+function showTooltip(x, y, contents) {
+       $('<div id="tooltip"><b>' + contents + '</b></div>').css( {
+           position: 'absolute',
+           display: 'none',
+           top: y - 15,
+           left: x + 5,
+           border: '1px solid #fdd',
+           padding: '2px',
+           'background-color': '#ebf0f2',
+           opacity: 0.80
+       }).appendTo("body").fadeIn(200);
+   }
+    
+function IsNumeric(input) {
+	return (input - 0) == input && input.length > 0;
+}
+
+function checkIEversion() {
+	//check for IE and version
+	if (navigator.appName == 'Microsoft Internet Explorer') {
+		var ua = navigator.userAgent;
+		var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+		if (re.exec(ua) != null) {
+			var rv = parseFloat( RegExp.$1 );
+			if ( rv > 8.0 ) {
+				return 1;
+			}
+		}
+		return -1;
+	}else{
+	   return 1;
+	}
+}
+
+//activate/deactivate draw box
+function selbox() {
+    if (document.getElementById("box").checked) {
+    	drawControls.select.activate();
+    }else{
+    	drawControls.select.deactivate();
+    }
+}	
+
+//clear Map Results
+function clearmapresults (msg) {
+	selsites=[];
+	$('#mapresults').hide();
+	$("#sites tbody").empty();
+	$("#mapinfo").html("<hr>Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b>&nbsp;&nbsp;&nbsp;"+msg+"<hr>");
+}
+
+//load Plot
+function loadPlot () {
+	$("#plotinfo").html("<hr>Loading . . .");
+	plotDesc=[], plotselDesc=[];
+	
+	$.each(floradata, function(i, val) {
+		var lh=Math.log(parseFloat(val.Area_hectares)) / Math.log(10);
+		var ls=Math.log(parseFloat(val.NO_Species)) / Math.log(10);
+		if (jQuery.inArray(val.REF_NO, totsites) > -1) {
+			plotDesc.push(val);
+			plot_data.push([ lh, ls ]);
+		}
+		if (jQuery.inArray(val.REF_NO, selsites) > -1) {
+			plotselDesc.push(val);
+			selplot_data.push([ lh, ls ]);
+		}
+	});
+	
+//	var plot_options={lines: { show: false }, points: { show: true }, grid:{clickable: true, hoverable: true}};
+
+	var plot_options={lines: { show: false }, points: { show: true }, grid:{hoverable: true}, selection: { mode: "xy" }};
+	
+	var d1 = {color: "green", data: plot_data };			
+	var d2 = {color: "red", data: selplot_data };			
+	$.plot($('#plot'), [d1,d2], plot_options);
+
+	$("#plotinfo").html("<br><hr>Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b><hr>");
+}
+
+//load model
+function loadModel () {
+	$("#modelinfo").html("<hr>Loading . . .");
+	$("#model tbody").empty();
+	
+	$.getJSON('http://test.cybercommons.org/mongo/db_find/flora/model/{"fields":{"REF_NO":1,"Sitename":1,"NO_Species":1,"Est_NO_Species":1}}?callback=?', function(modeldata) {
+		if (selsites.length == 0) {
+			//none selected, use all
+			$.each(modeldata, function(i, val) { 
+				$( "#model tbody" ).append( "<tr>" + 
+						"<td>" + val.REF_NO + "</td>" + 
+						"<td><a href='http://fire.rccc.ou.edu/flora/"+parseInt(val.REF_NO)+"' target='_blank'>" + val.Sitename + "</a></td>" + 
+						"<td>" + val.NO_Species + "</td>" +
+						"<td>" + val.Est_NO_Species.toFixed(2) + "</td>" +
+						"</tr>"
+				); 
+			});
+		}else{
+			$.each(modeldata, function(i, val) { 
+				if (jQuery.inArray(val.REF_NO, selsites) > -1) {
+					$( "#model tbody" ).append( "<tr>" + 
+							"<td>" + val.REF_NO + "</td>" + 
+							"<td><a href='http://fire.rccc.ou.edu/flora/"+parseInt(val.REF_NO)+"' target='_blank'>" + val.Sitename + "</a></td>" + 
+							"<td>" + val.NO_Species + "</td>" +
+							"<td>" + val.Est_NO_Species.toFixed(2) + "</td>" +
+							"</tr>"
+					); 
+				}
+			});
+		}
+
+		$("#modelinfo").html("<hr>Sites: <b>"+totsites.length+"</b>&nbsp;&nbsp;&nbsp;Selected: <b>"+selsites.length+"</b><hr>");
+	});
+}
+
+
+</script>
+</head>
+<body>
+        
+<div id="container"> 
+	<div id="header" class="ui-widget-header"><h1>Portal to FloraS of North America</h1></div> 
+	
+	<div id="leftnav"> 
+		<h3><a href="http://test.cybercommons.org/flora/">Home</a></h3>
+		<p>
+			<input id="box" type="checkbox" onchange="selbox()" />
+			<label for="box">Select Sites</label>
+		</p>
+
+		<hr>
+		<p>
+			<div class="hs">Year</div>
+			<input id="yrbox" type="checkbox" />
+			From <input id="frmyear" type="text" style="width:34px;" />
+			To <input id="toyear" type="text" style="width:34px;" />
+		</p>
+		<p>
+			<input id="spbox" type="checkbox" />
+			<select id="idspecies">
+			<option value="" selected> Select Species </option>
+			<option value="1">Species < 99</option>
+			<option value="2">Species 100-499</option>
+			<option value="3">Species 500-999</option>
+			<option value="4">Species > 1000</option>
+			</select>     
+		</p>
+		<p>
+			<input id="stbox" type="checkbox" style="vertical-align:top;" />
+			<select id="idstate" multiple="multiple" size="5">
+			<option value="" selected> Select State </option>
+			</select>     
+		</p>
+		<p>
+			<div class="hs">Text Search</div>
+			<input id="txtbox" type="checkbox" />
+			<input id="txtsrch" type="text" style="width:160px;" />
+		</p>
+		<p style="text-align:center;">
+			<input id="search" type="button" value="Search" />
+		</p>
+		
+		<hr>
+		<p style="text-align:center;">
+			<input id="advsearch" type="button" value="Advanced Search" />
+		</p>
+		
+		<hr>
+		<p style="text-align:center;">
+			<img src="FloraS.gif" alt="FloraS of North America" width="198px" height="180px" />
+		</p>
+	</div> 
+	
+	<div id="content"> 
+		<div id="tabs">
+			<ul>
+				<li><a href="#maptab">Map</a></li>
+				<li><a href="#plottab">Plot</a></li>
+				<li><a href="#modeltab">Model</a></li>
+				<li><a href="#abouttab">About Floras</a></li>
+			</ul>
+	
+			<div id="maptab">
+				<div id="map"></div>
+				<div id="mapinfo"></div>
+				<div id="mapresults" class="ui-widget">
+					<table id="sites" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>REF NO</th>
+								<th>SITENAME</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div id="plottab">
+				<div id="plot"></div>
+				<div id="plotinfo"></div>
+				<div id="plotresults"></div>
+			</div>
+			
+			<div id="modeltab">
+				<div id="modelinfo"></div>
+				<div id="modelresults" class="ui-widget">
+					<table id="model" class="ui-widget ui-widget-content">
+						<thead>
+							<tr class="ui-widget-header ">
+								<th>REF NO</th>
+								<th>SITENAME</th>
+								<th>NUM SPECIES</th>
+								<th>CALCULATED SPECIES</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div id="abouttab">
+				<h3>Portal to FloraS of North America</h3>
+				<h4>Ver 1.3</h4>
+			</div>
+
+		</div>
+	</div> 
+
+</div> 
+
+</body>
+</html>
