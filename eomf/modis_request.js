@@ -43,7 +43,7 @@ taskdesc = {
 };
 
 
-$(".button").click( function() {calltask(taskdesc);} );
+$("#submit").click( function() {calltask(taskdesc);} );
 
 });
 
