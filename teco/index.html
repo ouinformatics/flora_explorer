@@ -51,6 +51,7 @@ $(document).ready(function(){
                         <select id='Model' style="width:240px;">
                             <option value="TECO_f1" >TECO</option>
                             <option value="DDA">TECO: Dynamic Data Assimilation</option>
+                            <option value="grassland">TECO: Grassland</option>
                         </select>
                         <div id="dafreq" style="float:right;margin-right:10px;">Frequency &nbsp;
                             <input type="number" id="dda_freq" value="1" style="width:100px;" min="1" /> &nbsp;Hours
@@ -72,7 +73,20 @@ $(document).ready(function(){
                         </div>
                                         <!--<div id='toolbar' class="ui-widget-header"> <button id ='runBut'  type="button">Run TECO WorkFlow</button></div>-->
                     </td></tr>
-                <tr><td>Site</td><td> <select id='AMF_site' style="width:240px;"></select></td><td><button id ='siteopener' type="button">Show Site Map</button></td></tr>
+                <tr><td><div id="cdi_text">Site</div><br/> <input id="cdi" type="checkbox"  value="cdi" />&nbsp;Custom Data Input</td>   
+                    <td>
+                         <select id='AMF_site' style="width:240px;"></select>
+                         <select id='AMF_site_grass' style="width:240px;">
+                                <option value="US-Kon" >Konza Praire</option>
+                         </select>
+                         <select id='cdi_site' style="width:240px;"></select>
+                        <select id='gdi_site' style="width:240px;"></select>
+                    </td>
+                    <td>
+                        <button id ='siteopener' type="button">Show Site Map</button>
+                        <button id ='cdi_opener' type="button">Upload Data</button>
+                    </td>
+                </tr>
                 <tr>
                     <td>Initialize Data</td>
                     <td> <input type="text" id="idata" value="(1991,2006)" readonly="readonly" style="margin-left:2px;width:227px;"/></td>
@@ -122,6 +136,64 @@ $(document).ready(function(){
     <div id="site-dialog">
         <div id="map"></div>
         <div id="mapinfo"></div>
+    </div>
+    <div id="upload-dialog">
+        <form name="form_upload" id="form_upload" enctype="multipart/form-data" method="post"> <!--action="/tools/upload" enctype="multipart/form-data" method="post">-->
+            <div id="container1">
+                <input type="hidden" id="dest" name="dest" value="/static/teco_fileupload/" />
+                <input type="hidden" id="task" name="task" value='{"name":"cybercomq.static.tasks.teco_upload@static","param":""}' />
+                <div style="overflow: auto; width: 100%">
+                    <div id="first" style="float: left; text-align: left;" >
+                        <h4 style="display:run-in;">Select File:</h4>
+                        <div style="padding:5px;">
+                            <input id="fileToUpload" class="span12" type="file" name="fileToUpload"  /><br/>
+                            <br/>
+                            <b>TECO File :</b>&nbsp; <input type="radio" name="teco_file" value="forcing" checked="checked"/>&nbsp; Forcing File&nbsp;
+                                          <input type="radio" name="teco_file" value="NEE" /> Observed NEE<br/><br/>
+                            <div id="obs_nee"><b>Select Forcing File (Matches NEE file):</b>&nbsp;  <select id="selectfile"></select></div><br/>
+                            <b>Format:</b>&nbsp; <input type="radio" name="filetype" value="fixed_width" checked="checked"/>&nbsp; Fixed-width(" ")&nbsp;
+                                        <input type="radio" name="filetype" value="csv" /> Comma-separated values(",")<br/></br/>
+                
+                            <!--<input id="fileToUpload" class="span14" type="file" name="fileToUpload" onchange="fileSelected(this.form);" />  -->
+                            <button id ='btn_upload' style="float:right;margin-right:100px;" type="button" onclick="fileSelected(this.form);">Submit</button>
+                            <!--<input type="file" name="myFile">-->
+                        </div>
+                    </div>
+               <!--<input type="submit"> -->
+                    </br>
+                <!--<div class="span1"></div>
+                    <div style="width:100%">
+                        <h4 class="span12">Results:</h4><br/>
+                        <div id="result" style="clear:both; text-align: left;"></div>
+                        <div id=progressbar style="float: left; text-align: left; width: 20%; height: 18px;"></div>
+                        <div id="down_result" style="float: left; text-align: left;"></div>
+                        <div id="spinner" style="float: left; text-align: left;"><img width="80%" height="28"  src=" ajax-loader.gif"></div>
+                    </div>-->
+                </div>
+            </div>
+        </form>
+        <form name="grass_upload" id="grass_upload" enctype="multipart/form-data" method="post">
+            <div id="container1">
+                <input type="hidden" id="dest_g" name="dest" value="/static/teco_fileupload/" />
+                <input type="hidden" id="task_g" name="task" value='{"name":"cybercomq.static.tasks.teco_upload_grass@static","param":""}' />
+                <div style="overflow: auto; width: 100%">
+                    <h4 style="display:run-in;">Select File:</h4>
+                    <div style="padding:5px;">
+                        <input id="fileToUpload_g" class="span12" type="file" name="fileToUpload"  /><br/>
+                        <br/>
+                        <button id ='btn_upload1' style="float:right;margin-right:100px;" type="button" onclick="fileSelected(this.form);">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <div style="clear:both;width:100%">
+            <h3 class="spanx2" style="text-align:left;">Results:</h3><br/>
+            <div id="result" style="clear:both; text-align: left;"></div>
+            <div id=progressbar style="float: left; text-align: left; width: 20%; height: 18px;"></div>
+            <div id="down_result" style="float: left; text-align: left;"></div>
+            <div id="spinner" style="float: left; text-align: left;"><img width="80%" height="28"  src=" ajax-loader.gif"></div>
+        </div>
     </div>
 </body>
 </html>

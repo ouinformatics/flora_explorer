@@ -1,10 +1,25 @@
-var wsgiURL="/ccupload/";		//loc: /var/www/apps/ccupload/ccupload.wsgi  - python upload script
+var wsgiURL="/upload_auth/upload/";		//loc: /var/www/apps/ccupload/ccupload.wsgi  - python upload script
 
 function fileSelected(form) {
 	if (navigator.appName.search("Microsoft")  >= 0) {
 		IE_Upload(form);
 	}else{
-		Other_Upload();
+            var fd = new FormData();
+            if($('#Model').val()=='grassland'){
+                fd.append('fileToUpload', document.getElementById('fileToUpload_g').files[0]);
+                fd.append('dest', document.getElementById('dest_g').value);
+                fd.append('task',document.getElementById('task_g').value);
+                fd.append('filetype', "fixed_width");
+                fd.append('teco_file', 'grass');
+            }else{
+                fd.append('fileToUpload', document.getElementById('fileToUpload').files[0]);
+                fd.append('dest', document.getElementById('dest').value);
+                fd.append('task',document.getElementById('task').value);
+                fd.append('filetype', get_radio_value('filetype'));
+                fd.append('teco_file', get_radio_value('teco_file'));
+
+            }
+	    Other_Upload(fd);
 	}
 }
 
@@ -57,13 +72,15 @@ function IE_Upload(form) {
 	form.submit();
 }
 
-function Other_Upload() {
+function Other_Upload(fd) {
 	$("#progressbar").progressbar({ value : 0 });
 
-	var fd = new FormData();
-       fd.append('fileToUpload', document.getElementById('fileToUpload').files[0]);
-       fd.append('dest', document.getElementById('dest').value);
-		
+	//var fd = new FormData();
+       //fd.append('fileToUpload', document.getElementById('fileToUpload').files[0]);
+       //fd.append('dest', document.getElementById('dest').value);
+       //fd.append('task',document.getElementById('task').value);
+       //fd.append('filetype', get_radio_value('filetype'));
+       //fd.append('teco_file', get_radio_value('teco_file'));
 	$.ajax({
 		 xhr: function() {
 			 var xhr = new window.XMLHttpRequest();
@@ -91,7 +108,50 @@ function Other_Upload() {
 
 		success : function(data) {
 			$("#progressbar").hide();
-			$("#result").text(data);
+                        
+			//$("#down_result").html('Loading Data from file to Database.');//#data);
+                        var ddata = JSON.parse(data);
+                        //alert(ddata.task_id);
+                        if(ddata.task_id=='None'){
+                          $("#down_result").html(data);  
+                        }else{
+                            $("#down_result").html('Loading TECO Data to Database. &nbsp;&nbsp;&nbsp;');
+                             poll_status(ddata.task_id);
+                        }
 		}
 	});				
+}
+function get_radio_value(name){
+for (var i=0; i < document.form_upload[name].length; i++)
+   {
+   if (document.form_upload[name][i].checked)
+      {
+      return document.form_upload[name][i].value;
+      }
+   }
+}
+// Called by call task to poll queue status of task based on task_id
+function poll_status(task_id) {
+     $.getJSON('http://test.cybercommons.org/queue/task/' + task_id + '?callback=?', 
+                    function(data) { 
+                        if (data.status == "PENDING") {
+                            setTimeout(function() { poll_status(task_id);}, 2000);
+                            //$(taskdesc.status).text("Working...");
+                            $('#spinner').show();
+                        } else if (data.status == "FAILURE") {
+                            $('#down_result').text(JSON.stringify(data.result));
+                            $('#spinner').hide();
+                        } else if (data.status == "SUCCESS") {
+                            //$(taskdesc.status).html('<a href="' + data.tombstone[0].result + '">Download</a>');
+                            //setTimeout(function() { startDownload(data.tombstone[0].result)}, 3000);
+                            //alert(data.tombstone[0].result.description);
+                            if(data.tombstone[0].result.status==false){
+                                var status = "<br/><b>Status:</b>  ERROR <br/><br/>" + data.tombstone[0].result.description
+                            }else{
+                                var status = "<br/><b>Status:</b>  SUCCESS <br/><br/>" + data.tombstone[0].result.description
+                            }
+                            $('#down_result').html(status);
+                            $('#spinner').hide();
+                        }
+                    });
 }
