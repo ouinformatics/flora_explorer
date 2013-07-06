@@ -19,11 +19,16 @@
 </style>
 <script type="text/javascript" src="http://static.cybercommons.org/js/OpenLayers-2.12/OpenLayers.js"></script>
 <script>
-
+var baseurl_auth='http://' + window.location.hostname + '/';
+var baseurl_workflow ='http://' + window.location.hostname;// production.cybercommons.org';
 var map, drawControls, selectControl, selectedFeature;
 //var extent = new OpenLayers.Bounds(-178.3125, 6.44921875, -36.6875, 95.55078125);
 var extent = new OpenLayers.Bounds(-100.3125, 25.44921875, -40.6875, 80.55078125);
 $(document).ready(function(){ 
+    /*if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)) {
+            window.location.href = "http://stackoverflow.com";
+            var ieversion = new Number(RegExp.$1);       
+    }*/
     initialize_map();
     onReady();
 });
@@ -31,6 +36,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body link="blue" alink="blue" vlink="violet">
+    <!--[if IE]><div style='clear: both; height: 112px; padding:0; position: relative;'><a href="http://www.theie8countdown.com/ie-users-info"><img src="http://www.theie8countdown.com/assets/badge_iecountdown.png" border="0" height="112" width="348" alt="" /></a></div><![endif]-->
     <div id="siteparam-dialog" ></div>
     <div id="data-dialog"></div>
     <div id='container'>

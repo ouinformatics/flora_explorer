@@ -17,7 +17,7 @@
     var tecoLayer = new OpenLayers.Layer.Vector("Teco Sites", {styleMap: myStyles} );
     $("#mapinfo").html("Loading . . .");
     var points=[];
-        $.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/location/%7B%22spec%22:%7B%22commons_id%22:300,%22loc_id%22:%7B'$in':['US-HA1','US-ARM','US-ATQ','US-BRW','US-DK2','US-DK3','US-UMB','US-VAR','US-NE3','US-NE1','US-SYV','US-LOS','US-ME2','US-TON','US-SO2','US-WCR','US-IB1','US-MOZ','US-MMS','US-IB2','US-HO1','US-NR1','US-PFA','US-SHD','US-NE2']%7D%7D%7D/?callback=?", function(fdata) {
+        $.getJSON( baseurl_workflow + "/mongo/db_find/catalog/location/%7B%22spec%22:%7B%22commons_id%22:300,%22loc_id%22:%7B'$in':['US-HA1','US-ARM','US-ATQ','US-BRW','US-DK2','US-DK3','US-UMB','US-VAR','US-NE3','US-NE1','US-SYV','US-LOS','US-ME2','US-TON','US-SO2','US-WCR','US-IB1','US-MOZ','US-MMS','US-IB2','US-HO1','US-NR1','US-PFA','US-SHD','US-NE2']%7D%7D%7D/?callback=?", function(fdata) {
                 $.each(fdata, function(key,val) {
                         var pointFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(val.lon, val.lat));
                 pointFeature.attributes = {
