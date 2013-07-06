@@ -16,15 +16,17 @@
 //var verDate={"0":"2.6","1":"26 June 2012"};
 //var verDate={"0":"2.7","1":"28 June 2012"};
 //var verDate={"0":"2.8","1":"29 June 2012"};
-var verDate={"0":"2.9","1":"2 July 2012"};
-
+//var verDate={"0":"2.95","1":"20 August 2012"};
+var verDate={"0":"2.97","1":"26 September 2012"};
 var map, options, floraLayer, selectControls, floraStyles;
+var lay_osm,glayers
 var sitesTotal=[], sitesActive=[], sitesSel=[];
 
-var selnum=0, saveselsites=[];
+var selnum=0, saveselsites=[], saveseldata=[];
 var plot_data=[], selplot_data=[], plotDesc=[], plotselDesc=[];
 var savflg=0;
-
+var qry='';
+var enqry='';
 var states = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District/Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","ALB":"Alberta","BCL":"British Columbia","CAN":"Canada","MAN":"Manitoba","NB":"New Brunswick","NFL":"Newfoundland","NS":"Nova Scotia","NWT":"Northwest Territories","ONT":"Ontario","PEI":"Prince Edward Island","QUE":"Quebec","SAS":"Saskatchewan","SPM":"Saint Pierre et Miquelon","YUK":"Yukon"};
 var stylesColor={"0":"#0000ff","1":"#b575b5","2":"#f5914d","3":"#bd2126","4":"#8cba52","5":"#8cc4d6","6":"#007a63","7":"#705421","8":"#69c4ad","9":"#008000","10":"#000080","11":"#800080","12":"#c0c0c0"};
 
@@ -41,10 +43,35 @@ $(window).load(function() {
 		maxExtent : new OpenLayers.Bounds([ -19803292.13,-5205054.49, 547896.95, 15497748.74 ])
 	}
 	map = new OpenLayers.Map('map', options);
-
+        var lay_goo = new OpenLayers.Layer.Google('Google', {
+                type: google.maps.MapTypeId.SATELLITE,
+                sphericalMercator: true
+            });
 	ccbasemap = new OpenLayers.Layer.XYZ("ccbasemap", "http://129.15.41.144:8080/ccbasemap/${z}/${x}/${y}.png", { 'sphericalMercator' : true });
-	map.addLayer( ccbasemap );
-	
+        lay_osm = new OpenLayers.Layer.Google('OSM');
+        glayers= [
+            new OpenLayers.Layer.Google(
+                "Google Physical",
+                {type: google.maps.MapTypeId.TERRAIN}
+            ),
+            new OpenLayers.Layer.Google(
+                "Google Streets", // the default
+                {numZoomLevels: 20}
+            ),
+            new OpenLayers.Layer.Google(
+                "Google Hybrid",
+                {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+            ),
+            new OpenLayers.Layer.Google(
+                "Google Satellite",
+                {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+            ),
+            ccbasemap,lay_osm
+        ];
+
+	map.addLayers(glayers); //[ccbasemap,lay_osm] );
+
+
 	center = new OpenLayers.LonLat(-100, 45);
 	center = center.transform(options.displayProjection,options.projection);
 	map.setCenter(center, 4);
@@ -111,13 +138,19 @@ $(window).load(function() {
     
     for(var key in selectControls) {
         map.addControl(selectControls[key]);
+	//$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/tools/getbib/endnote/{"spec":{"label":{"$in":['+saveselsites[i]+']}}}/flora/citation>EndNote</a> &bull; ');
+	//$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/tools/getbib/endnote/{"spec":{"label":{"$in":['+saveselsites[i]+']}}}/flora/citation>EndNote</a> &bull; ');
         selectControls[key].events.register("featureadded", this, function (f) {
+                //OpenLayers.Element.addClass(map.viewPortDiv, "olCursorWait");
+                //map.div.style.cursor='wait';
     		$.each(floraLayer.features, function(key,val) {
     			if(val.geometry.intersects(f.feature.geometry)) {
     				onFeatureSelect(val);
     				selectControls.select.highlight(val);
     			}
     		});
+               // map.div.style.cursor='default';
+               // OpenLayers.Element.removeClass(map.viewPortDiv, "olCursorWait");
         }); 
     }
     
@@ -140,12 +173,13 @@ $(document).ready( function() {
 		$("body").append('<div id="contactAll"></div>');
 		$("#contactAll").dialog({ height:500, width:850, title: "<h3>Floras Explorer Contact</h3><h4>Version: "+verDate[0]+"</h4><h5>"+verDate[1]+"</h5>", close: function() { $("#contactAll").remove(); } });
 		$("#contactAll").load('http://test.cybercommons.org/flora/contact.html');
+                //$("#contactAll").load('contact.html');
 	});
 	
 	$('#help').click(function(){
 		$("body").append('<div id="helpAll"></div>');
 		$("#helpAll").dialog({ height:500, width:850, title: "<h3>How To Use Floras Explorer</h3><h4>Version: "+verDate[0]+"</h4><h5>"+verDate[1]+"</h5>", close: function() { $("#helpAll").remove(); } });
-		$("#helpAll").append('<p>Home</p><p>About</p><p>Contact</p><p>Search Options</p><p>State Search</p><p>Text Search</p><p>Advanced Search</p>');
+            $("#helpAll").append('</br><b>Please click link below:</b></br></br><a href="http://static.cybercommons.org/data/flora/florasexplorerinstructions.pdf" style="color:#2175A6;" target="_blank">Help and Instructions for Beta-Testers</a>');
 	});
 	
 	$("#advSearch").collapse()
@@ -226,6 +260,9 @@ function toggleControl(element) {
 }
 
 function onFeatureSelect(feature) {
+        //map.div.style.cursor='wait';
+        //setcursor();
+        //setTimeout("document.body.style.cursor = 'wait'", 1);
 	if (jQuery.inArray(feature.attributes.REF_NO, sitesSel) < 0) {
 		sitesSel.push(feature.attributes.REF_NO);
 		$( "#sites tbody" ).append( "<tr>" + 
@@ -239,8 +276,16 @@ function onFeatureSelect(feature) {
 		$("#selname").val("Selected Sites "+sitesSel.length);
 		$("#selinfo").dialog({ title: "" }).dialog('open');
 	}
+        //setTimeout("document.body.style.cursor = 'auto'", 1);
+        //setcursor();
+       // map.div.style.cursor='wait';
 }
-
+function executeFunctionWithCursor(){
+    document.body.style.cursor = "wait";
+    map.div.style.cursor='wait';
+    setTimeout("doAdvSearch()", 1);
+    setTimeout("document.body.style.cursor = 'auto';map.div.style.cursor='default';", 1);
+}
 function showbib(ref_no) {
 	if ($("#bibAll"+ref_no).length < 1) {
 		$("body").append('<div id="bibAll'+ref_no+'"></div>');
@@ -248,7 +293,16 @@ function showbib(ref_no) {
 		$("#bibAll"+ref_no).append('<iframe id="iframe'+ref_no+'" src="http://test.cybercommons.org/florabib/'+ref_no+'" width="900" height="700"></iframe>');
 	}
 }
+function setcursor(){
+    if ($('body').css('cursor') == 'auto'){
+        map.div.style.cursor='wait';
+        $('body').css('cursor', 'wait');
+    }else{
+        map.div.style.cursor='default';
+        $('body').css('cursor', 'auto');
+    }
 
+}
 function refreshAll() {
 	//refreshAll total sites
 	sitesActive=[], sitesSel=[];
@@ -269,11 +323,11 @@ function refreshAll() {
 
 function savesites() {
 	saveselsites[selnum]=sitesSel;
-	
+        saveseldata[selnum]=$("#sites tbody").clone();
 	var name = $("#selname").val();
 	
 	if (selnum == 1) {
-		$("#selAccordion").prepend("<div id='all' class='alert alert-info' style='text-align:center;'><b>ALL:</b> &nbsp; <a href='#' onclick='viewall();'>List Floras</a> &bull;  <a href='#' onclick='highlightall();'>Map Selection</a> &bull; <a href='#' onclick='plotall();'>Plot</a><div id='showPlotAll'></div></div>");
+		$("#selAccordion").prepend("<div id='all' class='alert alert-info' style='text-align:center;'><b>ALL:</b> &nbsp; <a href='#' onclick='viewall();'>List Floras</a> &bull;  <a href='#' onclick='highlightall();'>Map Selection</a> &bull; <a href='#' onclick='plotall();'>Species-area relationship</a><div id='showPlotAll'></div></div>");
 	}
 	
 	$("#selAccordion").append('\
@@ -287,7 +341,7 @@ function savesites() {
 					<ul class="dropdown-menu">\
 						<li><a href="#" onclick="selview('+selnum+');">List Floras</a></li>\
 						<li><a href="#" onclick="selhighlight('+selnum+');">Map Selection</a></li>\
-						<li><a href="#" onclick="selzoom('+selnum+');">Zoom</a></li>\
+						<li><a href="#" onclick="selzoom('+selnum+');">Zoom to selected</a></li>\
 						<li><a href="#" onclick="selextent('+selnum+');">Flora extent</a></li>\
 						<li><a href="#" onclick="selplot('+selnum+');">Species-area relationship</a></li>\
 						<li><a href="#" onclick="seldownld('+selnum+');">Download</a></li>\
@@ -350,12 +404,19 @@ function viewall() {
 }
 
 function selview(i) {
+        //alert (saveselsites[i]);
+        //alert(saveseldata[i]);
+        //map.div.style.cursor  = 'wait'; 
 	$("#sites tbody").empty();
-	$.each(saveselsites[i], function(key,val) {
+        $("#sites").append(saveseldata[i]);
+	//$.each(saveselsites[i], function(key,val) {
+                /*
 		var found=0;
+                alert(val);
 		$.each(floraLayer.features, function(key2,val2) {
 			if (val===val2.attributes.REF_NO) {
 				found=1;
+                                alert('found');
 				$( "#sites tbody" ).append( "<tr>" + 
 						"<td>" + val2.attributes.REF_NO + "</td>" + 
 						"<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val2.attributes.REF_NO)+'"'+");'>" + val2.attributes.Sitename + "</a></td>" +
@@ -367,18 +428,45 @@ function selview(i) {
 			}
 		});
 		if (! found) {
-			$( "#sites tbody" ).append( "<tr>" + 
+                    alert('not found');*/
+                    /*var durl ="http://test.cybercommons.org/mongo/db_find/flora/adv_search/{'spec':{'Label':"+parseInt(val)+"},'fields':['Label','ShortTitle','REF_NO','Sitename','Year','NO_Species','Area_hectares']}/?callback=?";
+                    $.getJSON(durl, function(data) {
+                        $.each(data, function(key3,val3) {
+                            if (val3.REF_NO == null){
+                            $( "#sites tbody" ).append( "<tr>" + 
+                                          "<td>" + parseInt(val) + "</td>" + 
+                                          "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val3.ShortTitle + "</a></td>" +
+                                          "<td style='text-align:center;'>" + val3.Year  + "</td>" +
+                                          "<td style='text-align:right;'>N/A</td>" +
+                                          "<td style='text-align:right;'>N/A</td>" +
+                                          "</tr>"
+                          );
+                            }else{
+                            $( "#sites tbody" ).append( "<tr>" +
+                                          "<td>" + parseInt(val) + "</td>" +
+                                          "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val3.Sitename + "</a></td>" +
+                                          "<td style='text-align:center;'>" + val3.Year  + "</td>" +
+                                          "<td style='text-align:right;'>" + val3.Area_hectares + "</td>" +
+                                          "<td style='text-align:right;'>" + val3.NO_Species +"</td>" +
+                                          "</tr>"
+                          );
+                            }
+
+                        });
+                    });*/
+	/*		$( "#sites tbody" ).append( "<tr>" + 
 					"<td>" + val + "</td>" + 
 					"<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val + "</a></td>" +
 					"<td style='text-align:center;'>N/A</td>" + 
 					"<td style='text-align:right;'>N/A</td>" + 
 					"<td style='text-align:right;'>N/A</td>" + 
 					"</tr>"
-			); 
-		}
-	});
+			);*/ 
+		//}
+	//});
 	$("#seldivname").hide();
 	$("#selinfo").dialog({ title: $("#bname"+i).html() }).dialog('open');
+        //map.div.style.cursor  = 'default';
 }
 
 function highlightall() {
@@ -648,11 +736,44 @@ function seldownld(i) {
 	$("#selAccordion").append('<div id="downinfo'+i+'"></div>');
 	$("#downinfo"+i).dialog({ height:500, width:850, title: "Download "+saveselsites[i].length+" sites", close: function() { $("#downinfo"+i).remove(); } });
 	$("#downinfo"+i).append('<br /><br /><b>Citations</b> &nbsp; (Use RIS for downloading to EndNote)<br /><br />');
-	//$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/tools/getbib/endnote/{"spec":{"label":{"$in":['+saveselsites[i]+']}}}/flora/citation>EndNote</a> &bull; ');
-	$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/tools/getbib/ris/{"spec":{"label":{"$in":['+saveselsites[i]+']}}}/flora/citation>RIS</a> &bull; ');
-	$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/tools/getbib/bibtex/{"spec":{"label":{"$in":['+saveselsites[i]+']}}}/flora/citation>Bib Tex</a><br />');
+        $("#downinfo"+i).append('<a style="color:#08C;" href="javascript:void(0);" onclick="download_post(\'ris\',' + String(i) + ');">RIS</a> &bull; ');
+        $("#downinfo"+i).append('<a style="color:#08C;" href="javascript:void(0);" onclick="download_post(\'bibtex\',' + String(i) + ');">Bib Tex</a> <br/> ');
 	$("#downinfo"+i).append('<br /><br /><b>Flora Data</b><br /><br />');
-	$("#downinfo"+i).append('<a style="color:#08C;" href=http://test.cybercommons.org/mongo/db_find/flora/data/{"spec":{"REF_NO":{"$in":['+saveselsites[i]+']}}}?outtype=csv>CSV</a><br />');
+        $("#downinfo"+i).append('<a style="color:#08C;" href="javascript:void(0);" onclick="download_post(\'csv\',' + String(i) + ');">CSV</a> <br/> ');
+}
+
+function download_post(data_format,data_query){
+    if (data_format=='csv'){
+        var url = 'http://test.cybercommons.org/tools/get_datafile/';
+        var querys = '{"spec":{"REF_NO":{"$in":['+saveselsites[parseInt(data_query)]+']}}}';
+    } else {
+        var url = 'http://test.cybercommons.org/tools/getbib/';
+        var querys = '{"spec":{"label":{"$in":['+saveselsites[parseInt(data_query)]+']}}}';
+    }
+    var data ={ format:data_format,query:querys}
+    form_post(url,data);
+}
+//function download_post_data(data_format,data_query){
+//    var url = 'http://test.cybercommons.org/tools/get_datafile/';
+//    var querys = '{"spec":{"label":{"$in":['+saveselsites[parseInt(data_query)]+']}}}';
+//    var data ={ format:data_format,query:querys}
+//    form_post(url,data);
+//}
+function form_post(url,data){
+    var form = document.createElement("form");
+    form.setAttribute("method","post");
+    form.setAttribute("action", url);
+    for(var key in data) {
+        if(data.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", data[key]);
+            form.appendChild(hiddenField);
+         }
+    }
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function searchState (sstates) {
@@ -667,6 +788,27 @@ function searchState (sstates) {
 			}
 		});
 	});
+        /*
+        var query='';
+        var stvals = $("#idstate").val() || [];
+        if (stvals.length>0) {
+                var sst='"'+stvals.join('","')+'"';
+                query+="{'State':{'$in':["+sst+"]}},";
+        }
+        var durl ="http://test.cybercommons.org/mongo/db_find/flora/adv_search/{'spec':"+query+",'fields':['Label','ShortTitle','eYear','REF_NO','Sitename','State','Year','midlat','midlon','NO_Species','Area_hectares','NO_Tot_Taxa']}/?callback=?";
+        $.getJSON(durl, function(data) {
+            data.sort();
+            $.each(data, function(key,val) {
+              if (val.REF_NO != null){
+                    drecs.push( { "REF_NO":val.REF_NO, "Sitename":val.Sitename, "Year":val.Year, "Area_hectares":val.Area_hectares, "NO_Tot_Taxa":val.NO_Tot_Taxa } );
+              }else{
+                    drecs.push( { "REF_NO":val.Label, "Sitename":val.ShortTitle, "Year":val.Year, "Area_hectares":"N/A", "NO_Tot_Taxa":"N/A" } );
+              }
+            });
+                            //if (--expectedResponses == 0)
+                            //    gotResponsesFromAllCalls();
+        }, "html");*/
+        
 }
 
 function searchText (txtsrch) {
@@ -690,9 +832,11 @@ function searchText (txtsrch) {
 
 //Advanced Search============================================================================================
 function doAdvSearch () {
-	
-	var qry='';
-	var enqry='';
+	//setcursor();
+	//var qry='';
+        qry='';
+	//var enqry='';
+        enqry='';
 	var andor='and';
 
 //Site Description==========================================================================================
@@ -854,11 +998,20 @@ function doAdvSearch () {
 	}
 	
 	if ($('#Author').val()) {
-		enqry+="{'Author':{'$regex':'"+$('#Author').val()+"','$options':'i'}},";
+		//enqry+="{'Author':{'$regex':'"+$('#Author').val()+"','$options':'i'}},";
+                qry+="{'Author':{'$regex':'"+$('#Author').val()+"','$options':'i'}},";
 	}
 	
 	if ($('#allEndnote').val()) {
 		andor='or';
+                qry+="{'Author':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'Journal':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'Keywords':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'ReferenceType':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'ShortTitle':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'Title':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                qry+="{'Year':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                /*
 		enqry+="{'Author':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
 		enqry+="{'Journal':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
 		enqry+="{'Keywords':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
@@ -866,21 +1019,25 @@ function doAdvSearch () {
 		enqry+="{'ShortTitle':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
 		enqry+="{'Title':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
 		enqry+="{'Year':{'$regex':'"+$('#allEndnote').val()+"','$options':'i'}},";
+                */
 	}
 	
 	if ($('#REF_NO_min').val() || $('#REF_NO_max').val()) {
 		var ref_nomin = ($('#REF_NO_min').val()) ? $('#REF_NO_min').val() : 0;
 		var ref_nomax = ($('#REF_NO_max').val()) ? $('#REF_NO_max').val() : 23000;
-		qry+="{'REF_NO':{'$gte':"+ref_nomin+",'$lte':"+ref_nomax+"}},";
-		enqry+="{'Label':{'$gte':"+ref_nomin+",'$lte':"+ref_nomax+"}},";
+		//qry+="{'REF_NO':{'$gte':"+ref_nomin+",'$lte':"+ref_nomax+"}},";
+		//enqry+="{'Label':{'$gte':"+ref_nomin+",'$lte':"+ref_nomax+"}},";
+                qry+="{'Label':{'$gte':"+ref_nomin+",'$lte':"+ref_nomax+"}},";
 	}
 	
 	if (kwords.length>0) {
 		if (kwordsOther) {
-			enqry+="{'Keywords':{'$nin':['Complete','Reject','Work in Progress']}},";
+			//enqry+="{'Keywords':{'$nin':['Complete','Reject','Work in Progress']}},";
+                        qry+="{'Keywords':{'$nin':['Complete','Reject','Work in Progress']}},";
 		}else{
 			var ktyp='"'+kwords.join('|')+'"';
-			enqry+="{'Keywords':{'$regex':"+ktyp+",'$options':'i'}},";
+			//enqry+="{'Keywords':{'$regex':"+ktyp+",'$options':'i'}},";
+                        qry+="{'Keywords':{'$regex':"+ktyp+",'$options':'i'}},";
 		}
 	}
 	
@@ -927,29 +1084,42 @@ function doAdvSearch () {
 		};
 		
 		if( qry  ) {
-			var durl ="http://test.cybercommons.org/mongo/db_find/flora/data/{'spec': {'$"+andor+"': [ "+qry+" ]} ,'fields':['REF_NO','Sitename','State','Year','midlat','midlon','NO_Species','Area_hectares','NO_Tot_Taxa']}/?callback=?";
+			//var durl ="http://test.cybercommons.org/mongo/db_find/flora/data/{'spec': {'$"+andor+"': [ "+qry+" ]} ,'fields':['REF_NO','Sitename','State','Year','midlat','midlon','NO_Species','Area_hectares','NO_Tot_Taxa']}/?callback=?";
+                        var temp = qry.replace(/},{/g,",");
+                        temp=temp.slice(0,temp.length-1);
+                        //temp=temp.replace(/,,/g,",");
+                        //var durl ="http://test.cybercommons.org/mongo/db_find/flora/data/{'spec':"+temp+",'fields':['REF_NO','Sitename','State','Year','midlat','midlon','NO_Species','Area_hectares','NO_Tot_Taxa']}/?callback=?";
+                        var durl ="http://test.cybercommons.org/mongo/db_find/flora/adv_search/{'spec':"+temp+",'fields':['Label','ShortTitle','eYear','REF_NO','Sitename','State','Year','midlat','midlon','NO_Species','Area_hectares','NO_Tot_Taxa']}/?callback=?";
 			$.getJSON(durl, function(data) {
 				data.sort();
 				$.each(data, function(key,val) {
-					drecs.push( { "REF_NO":val.REF_NO, "Sitename":val.Sitename, "Year":val.Year, "Area_hectares":val.Area_hectares, "NO_Tot_Taxa":val.NO_Tot_Taxa } );
+                                   if (val.REF_NO != null){ 
+				        drecs.push( { "REF_NO":val.REF_NO, "Sitename":val.Sitename, "Year":val.Year, "Area_hectares":val.Area_hectares, "NO_Tot_Taxa":val.NO_Tot_Taxa } );
+                                    }else{
+                                        drecs.push( { "REF_NO":val.Label, "Sitename":val.ShortTitle, "Year":val.Year, "Area_hectares":"N/A", "NO_Tot_Taxa":"N/A" } );
+                                    }
 				});
-			    if (--expectedResponses == 0)
+			    //if (--expectedResponses == 0)
 			        gotResponsesFromAllCalls(); 
 			}, "html");
 		}
 		
 		if( enqry ) {
-			var eurl ="http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec': {'$"+andor+"': [ "+enqry+" ]} ,'fields':['Label','Year']}/?callback=?";
-			$.getJSON(eurl, function(data2) {
+			//var eurl ="http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec': {'$"+andor+"': [ "+enqry+" ]} ,'fields':['ShortTitle','Label','Year']}/?callback=?";
+                        var temp = enqry.replace(/},{/g,",");
+                        temp=temp.slice(0,temp.length-1);
+                        var eurl ="http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec':"+temp+",'fields':['ShortTitle','Label','Year']}/?callback=?";
+			/*$.getJSON(eurl, function(data2) {
 				data2.sort();
 				$.each(data2, function(key2,val2) { 
-					erecs.push( { "REF_NO":val2.Label, "Sitename":val2.Label, "Year":val2.Year, "Area_hectares":"N/A", "NO_Tot_Taxa":"N/A" } );
+					erecs.push( { "REF_NO":val2.Label, "Sitename":val2.ShortTitle, "Year":val2.Year, "Area_hectares":"N/A", "NO_Tot_Taxa":"N/A" } );
 				});			
 			    if (--expectedResponses == 0)
 			        gotResponsesFromAllCalls(); 
-			}, "html");
+			}, "html");*/
 		}
 	}
+    //setcursor();
 } //end doAdvSearch
 
 /* End of flora.js =========================== */
