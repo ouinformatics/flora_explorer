@@ -73,9 +73,9 @@ $(function() {
 
 	function populateList(variables, selector) {
 		$.each(variables, function(i, l) {
-			selector.append($("<option/>").val(l).text(l));
+		   selector.append($("<option/>").val(l).text(l));
 		});
-            	$('#variable>option[value="npp"]').attr('selected', true);
+            	//$('#variable>option[value="' + variables[0] + '"]').attr('selected', true);
 		$('#agmethod>option[value="Sum"]').attr('selected', true);
                 updateUI();
 	}
@@ -84,14 +84,28 @@ $(function() {
 		var tecovars = [];
 		var units = {};
 		var tecovar = [];
-		$.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/metadata/%7B'spec':%7B'name':%20'TECO%20Model%20Result%20File'%7D,'fields':['variables']%7D?callback=?", function(data) {
+                var tecolabel={}
+                var model ='';
+                if ( qs.hasOwnProperty('model') ) {
+                    model = qs.model;
+                }else{
+                    model='TECO Model Result File';
+                }
+		$.getJSON("http://test.cybercommons.org/mongo/db_find/catalog/metadata/{'spec':{'name':'" + model + "'},'fields':['variables']}?callback=?", function(data) {
 			tecovars = data[0].variables;
 			$.each(tecovars, function(i, v) {
 				units[v.name] = v.unit;
 				tecovar.push(v.name);
+                                tecolabel[v.name] = v.label;
 			});
                     tecovar.sort();
-                    populateList(tecovar,$('#variable'));
+//                    console.log(tecolabel);
+                    $.each(tecovar, function(i,l){
+                        $('#variable').append($("<option/>").val(l).text(tecolabel[l]));
+                    });
+                    $('#variable>option[value="' + tecovar[0] + '"]').attr('selected', true);
+                    updateUI();
+                    //populateList(tecovar,$('#variable'),tecolabel);
 		});
 		return units
 	}
