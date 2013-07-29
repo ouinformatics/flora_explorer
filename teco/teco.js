@@ -1,6 +1,6 @@
 function onReady(){    
-    baseurl_auth='http://test.cybercommons.org/'
-    baseurl_workflow ='http://test.cybercommons.org'
+//    baseurl_auth='http://production.cybercommons.org/'
+//    baseurl_workflow ='http://production.cybercommons.org'
     oid='0';
     $('#obs_nee').hide();
     test_auth_tkt();
@@ -162,8 +162,12 @@ function onReady(){
     });
     function set_cdi(){
         var div;
+        if (window.location.hostname == "www.cybercommons.org"){
+            var durl="/app/catalog/db_find/cybercom_upload/data/";
+        }else{
         //var durl="http://production.cybercommons.org/catalog/db_find/cybercom_upload/data/"
-        var durl="/catalog/db_find/cybercom_upload/data/"
+            var durl="/catalog/db_find/cybercom_upload/data/";
+        }
         $.getJSON(durl + "{'spec':{'user':'" + String(oid) + "'}}?callback=?",function(data){
             //#alert(data[0]);
             $('#cdi_site').html('');
@@ -357,7 +361,7 @@ function onReady(){
         //$('#resultDiv').text("Status: Processing");
         //$('#set_input').css('background-color', 'yellow');
         //$('#run').css('background-color', 'yellow');
-        JSON_URL = 'http://test.cybercommons.org/queue/task/';
+        JSON_URL = baseurl_workflow + '/queue/task/' //'http://test.cybercommons.org/queue/task/';
         div_id='#set_input';
         //if (model=='TECO_f1'){
         //    next_obj();
@@ -408,7 +412,7 @@ function onReady(){
         }
        // alert(Params);
         div_id='#run'
-        var  url ="http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.runTECOworkflow/?" + Params
+        var  url = baseurl_workflow + "/queue/run/cybercomq.model.teco.task.runTECOworkflow/?" + Params //"http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.runTECOworkflow/?" + Params
         //alert(url);
             $.getJSON(url, function(task){
                 var j = task ;
@@ -436,7 +440,8 @@ function onReady(){
                 Params = Params + "&mod_weather=" + mdw;
                 // alert(Params + " checked");        
             }
-            $.getJSON("http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.initTECOrun?callback=?&site=" + Params , function(task){
+            //"http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.initTECOrun?callback=?&site="
+            $.getJSON( baseurl_workflow + "/queue/run/cybercomq.model.teco.task.initTECOrun?callback=?&site=" + Params , function(task){
                 var j = task ; 
                 JSON_URL = JSON_URL + j.task_id + '/?callback=?';
                 filepath=j.task_id; 
@@ -448,7 +453,8 @@ function onReady(){
             $('#pgif').show();
             $('#cur_stat').text("Running TECO Model");
             //$("#right").height($("#left").height());
-            $.getJSON('http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.runTeco?callback=?&task_id=' + filepath, function(task){
+            //'http://test.cybercommons.org/queue/run/cybercomq.model.teco.task.runTeco?callback=?&task_id='
+            $.getJSON(baseurl_workflow + '/queue/run/cybercomq.model.teco.task.runTeco?callback=?&task_id=' + filepath, function(task){
                 var j = task ;
                 result_id = j.task_id 
                 JSON_URL = JSON_URL + j.task_id + '/?callback=?'; 
@@ -476,7 +482,8 @@ function onReady(){
                    // $(div_id).css('background-color', 'green');
                     if(div_id=='#run'){ $('#runSP').hide();div_id='#done'; 
                                         $('#cr_stat').text("Status: " +  xhr_data.status );
-                                        var res_url='http://test.cybercommons.org/queue/report/' + result_id + '/';
+                                        //'http://test.cybercommons.org/queue/report/'
+                                        var res_url= baseurl_workflow + '/queue/report/' + result_id + '/';
                                         $("#result_http").html("<iframe src='" + res_url + "' style='width:100%;height:700px;' ></iframe>");
                                         //$.getJSON('http://test.cybercommons.org/queue/report/' + result_id + '/?callback=?',function(data){
                                         //    $('#result_http' ).html(data.html)
@@ -486,7 +493,8 @@ function onReady(){
                                         //} );
                                         }
                     if(div_id=='#set_input'){ $('#set_inputSP').hide(); div_id='#run'}
-                    JSON_URL = 'http://test.cybercommons.org/queue/task/';
+                    //JSON_URL = 'http://test.cybercommons.org/queue/task/';
+                    JSON_URL = baseurl_workflow + '/queue/task/';
                     next_obj();
                 }
                 },
@@ -511,7 +519,8 @@ function onReady(){
              } );
         }
     function setLocations(){
-        $.getJSON('http://test.cybercommons.org/model/getLocations?callback=?',function(data){
+        //'http://test.cybercommons.org/model/getLocations?callback=?'
+        $.getJSON(baseurl_workflow +'/model/getLocations?callback=?',function(data){
                 $.each(data.location, function(key,value) {   
                     $('#AMF_site')
                         .append($("<option></option>")
@@ -558,13 +567,15 @@ function onReady(){
         if($('#Model').val()=='grassland'){
             var site_grass = $('#AMF_site_grass').val();
             $('#siteparam-dialog' ).html('<h1>Loading........</h1>');
-            $.getJSON('http://test.cybercommons.org/model/tecositeparam?site=' + site_grass + '&model=' + $('#Model').val() + '&callback=?',function(data){
+            //'http://test.cybercommons.org/model/tecositeparam?site='
+            $.getJSON( baseurl_workflow + '/model/tecositeparam?site=' + site_grass + '&model=' + $('#Model').val() + '&callback=?',function(data){
                 $('#siteparam-dialog' ).html(data.html);
             });
             if( $('#cdi').is(':checked')){
               $('#data-dialog' ).html('<h1>Loading........</h1>');
               var site_grass1 = $('#gdi_site').val();
-              $.getJSON('http://test.cybercommons.org/model/tecodata?site=' + site_grass1 + '&model=' + $('#Model').val() + '&upload=' + oid + '&callback=?',function(data){
+            //'http://test.cybercommons.org/model/tecodata?site='
+              $.getJSON(baseurl_workflow + '/model/tecodata?site=' + site_grass1 + '&model=' + $('#Model').val() + '&upload=' + oid + '&callback=?',function(data){
                     $('#data-dialog' ).html(data.html);
                     setData();
                     $("#runBut").removeAttr("disabled");
@@ -575,7 +586,8 @@ function onReady(){
 
                 var site_grass = $('#AMF_site_grass').val();
                 $('#data-dialog' ).html('<h1>Loading........</h1>');
-                $.getJSON('http://test.cybercommons.org/model/tecodata?site=' + site_grass + '&model=' + $('#Model').val() + '&callback=?',function(data){
+                //'http://test.cybercommons.org/model/tecodata?site='
+                $.getJSON( baseurl_workflow + '/model/tecodata?site=' + site_grass + '&model=' + $('#Model').val() + '&callback=?',function(data){
                     $('#data-dialog' ).html(data.html);
                     setData();
                     $("#runBut").removeAttr("disabled");
@@ -588,7 +600,8 @@ function onReady(){
           if( $('#cdi').is(':checked')){
             //alert('yes');
             $('#data-dialog' ).html('<h1>Loading........</h1>');
-            $.getJSON('http://test.cybercommons.org/model/tecodata?site=' + site + '&upload=' + oid + '&callback=?',function(data){
+            //'http://test.cybercommons.org/model/tecodata?site='
+            $.getJSON( baseurl_workflow +  '/model/tecodata?site=' + site + '&upload=' + oid + '&callback=?',function(data){
                 $('#data-dialog' ).html(data.html);
                 setData();
                 $("#runBut").removeAttr("disabled");
@@ -596,11 +609,12 @@ function onReady(){
 
           }else{
             $('#siteparam-dialog' ).html('<h1>Loading........</h1>');
-            $.getJSON('http://test.cybercommons.org/model/tecositeparam?site=' + site + '&callback=?',function(data){
+            //'http://test.cybercommons.org/model/tecositeparam?site='
+            $.getJSON( baseurl_workflow + '/model/tecositeparam?site=' + site + '&callback=?',function(data){
                 $('#siteparam-dialog' ).html(data.html);
             });
             $('#data-dialog' ).html('<h1>Loading........</h1>');
-            $.getJSON('http://test.cybercommons.org/model/tecodata?site=' + site + '&callback=?',function(data){
+            $.getJSON( baseurl_workflow + '/model/tecodata?site=' + site + '&callback=?',function(data){
                 $('#data-dialog' ).html(data.html);
                 setData();
                 $("#runBut").removeAttr("disabled");
@@ -642,7 +656,7 @@ function onReady(){
     function historyLoad(){
         //var hist_url='http://production.cybercommons.org/queue/usertasks/["cybercomq.model.teco.task.runTECOworkflow","cybercomq.model.teco.task.runTeco"]'
         //$("#history").html("<iframe src='" + hist_url + "' style='width:100%;height:700px;' ></iframe>");
-        $.getJSON('http://test.cybercommons.org/queue/usertasks/["cybercomq.model.teco.task.runTECOworkflow","cybercomq.model.teco.task.runTeco"]/?callback=?',function(data){
+        $.getJSON(baseurl_workflow +'/queue/usertasks/["cybercomq.model.teco.task.runTECOworkflow","cybercomq.model.teco.task.runTeco"]/?callback=?',function(data){
                 $('#history' ).html(data.html)});
     }
 }
