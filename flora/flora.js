@@ -290,9 +290,6 @@ function toggleControl (element) {
 }
 
 function onFeatureSelect (feature) {
-	//map.div.style.cursor='wait';
-	//setcursor();
-	//setTimeout("document.body.style.cursor = 'wait'", 1);
 	if (jQuery.inArray(feature.attributes.REF_NO, sitesSel) < 0) {
 		sitesSel.push(feature.attributes.REF_NO);
 		$("#sites tbody").append("<tr>" +
@@ -306,9 +303,6 @@ function onFeatureSelect (feature) {
 		$("#selname").val("Selected Sites " + sitesSel.length);
 		$("#selinfo").dialog({ title: "" }).dialog('open');
 	}
-	//setTimeout("document.body.style.cursor = 'auto'", 1);
-	//setcursor();
-	// map.div.style.cursor='wait';
 }
 function executeFunctionWithCursor () {
 	document.body.style.cursor = "wait";
@@ -436,69 +430,10 @@ function viewall () {
 }
 
 function selview (i) {
-	//alert (saveselsites[i]);
-	//alert(saveseldata[i]);
-	//map.div.style.cursor  = 'wait';
 	$("#sites tbody").empty();
 	$("#sites").append(saveseldata[i]);
-	//$.each(saveselsites[i], function(key,val) {
-	/*
-	 var found=0;
-	 alert(val);
-	 $.each(floraLayer.features, function(key2,val2) {
-	 if (val===val2.attributes.REF_NO) {
-	 found=1;
-	 alert('found');
-	 $( "#sites tbody" ).append( "<tr>" +
-	 "<td>" + val2.attributes.REF_NO + "</td>" +
-	 "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val2.attributes.REF_NO)+'"'+");'>" + val2.attributes.Sitename + "</a></td>" +
-	 "<td style='text-align:center;'>" + val2.attributes.Year + "</td>" +
-	 "<td style='text-align:right;'>" + val2.attributes.Area + "</td>" +
-	 "<td style='text-align:right;'>" + val2.attributes.Taxon + "</td>" +
-	 "</tr>"
-	 );
-	 }
-	 });
-	 if (! found) {
-	 alert('not found');*/
-	/*var durl ="http://test.cybercommons.org/mongo/db_find/flora/adv_search/{'spec':{'Label':"+parseInt(val)+"},'fields':['Label','ShortTitle','REF_NO','Sitename','Year','NO_Species','Area_hectares']}/?callback=?";
-	 $.getJSON(durl, function(data) {
-	 $.each(data, function(key3,val3) {
-	 if (val3.REF_NO == null){
-	 $( "#sites tbody" ).append( "<tr>" +
-	 "<td>" + parseInt(val) + "</td>" +
-	 "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val3.ShortTitle + "</a></td>" +
-	 "<td style='text-align:center;'>" + val3.Year  + "</td>" +
-	 "<td style='text-align:right;'>N/A</td>" +
-	 "<td style='text-align:right;'>N/A</td>" +
-	 "</tr>"
-	 );
-	 }else{
-	 $( "#sites tbody" ).append( "<tr>" +
-	 "<td>" + parseInt(val) + "</td>" +
-	 "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val3.Sitename + "</a></td>" +
-	 "<td style='text-align:center;'>" + val3.Year  + "</td>" +
-	 "<td style='text-align:right;'>" + val3.Area_hectares + "</td>" +
-	 "<td style='text-align:right;'>" + val3.NO_Species +"</td>" +
-	 "</tr>"
-	 );
-	 }
-
-	 });
-	 });*/
-	/*		$( "#sites tbody" ).append( "<tr>" +
-	 "<td>" + val + "</td>" +
-	 "<td><a style='color:#08C;' href='#' onclick='showbib("+'"'+parseInt(val)+'"'+");'>" + val + "</a></td>" +
-	 "<td style='text-align:center;'>N/A</td>" +
-	 "<td style='text-align:right;'>N/A</td>" +
-	 "<td style='text-align:right;'>N/A</td>" +
-	 "</tr>"
-	 );*/
-	//}
-	//});
 	$("#seldivname").hide();
 	$("#selinfo").dialog({ title: $("#bname" + i).html() }).dialog('open');
-	//map.div.style.cursor  = 'default';
 }
 
 function highlightall () {
@@ -1120,10 +1055,11 @@ function doAdvSearch () {
 		}
 
 		if (enqry) {
+                        //removed and combineded with qry
 			//var eurl ="http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec': {'$"+andor+"': [ "+enqry+" ]} ,'fields':['ShortTitle','Label','Year']}/?callback=?";
-			var temp = enqry.replace(/},{/g, ",");
-			temp = temp.slice(0, temp.length - 1);
-			var eurl = "http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec':" + temp + ",'fields':['ShortTitle','Label','Year']}/?callback=?";
+			//var temp = enqry.replace(/},{/g, ",");
+			//temp = temp.slice(0, temp.length - 1);
+			//var eurl = "http://test.cybercommons.org/mongo/db_find/flora/endnote/{'spec':" + temp + ",'fields':['ShortTitle','Label','Year']}/?callback=?";
 			/*$.getJSON(eurl, function(data2) {
 			 data2.sort();
 			 $.each(data2, function(key2,val2) {
