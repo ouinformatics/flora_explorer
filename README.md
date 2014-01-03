@@ -1,4 +1,4 @@
-### Flora Explorer
+### Flora Explorer ###
 =============
 
 Flora web app and dynamic florabib django web application.
@@ -11,5 +11,10 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
  * Web Applications 
     * Mongo Cybercommons Web API Applicatiion
         [Mongo Web API](https://github.com/ouinformatics/cybercom)
+        <pre>
+            #Install pip and virtualenv
+            easy_install pip
+            pip install virtualenv
+        </pre> 
     * Flora and Florabib Applications
         [Flora Explorer](https://github.com/ouinformatics/flora_explorer)   
