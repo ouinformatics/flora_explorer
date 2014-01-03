@@ -7,20 +7,19 @@
 <meta name="description" content="The Floras of North America project">
 <meta name="author" content="OU CyberCommons">
 
-<link rel=stylesheet href="http://test.cybercommons.org/flora/jqui/development-bundle/themes/base/jquery.ui.all.css" type="text/css" media="screen, print">
-<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
-<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
-<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="resource/jqui/development-bundle/themes/base/jquery.ui.all.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="resource/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="resource/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="resource/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
 
-<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
-<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="http://static.cybercommons.org/js/OpenLayers-2.12/OpenLayers.js"></script>-->
-<script type="text/javascript" src="http://test.cybercommons.org/flora/OpenLayers-2.11/OpenLayers.js"></script>
-<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.min.js"></script>
-<script type="text/javascript" src="http://static.cybercommons.org/js/flot/jquery.flot.selection.min.js"></script>
-<script type="text/javascript" src="http://test.cybercommons.org/flora/flotlabels/jquery.flot.axislabels.js"></script>
-<script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false&key=AIzaSyB1OApFshSYU6P8eUk7BpF6_oPMD9Du8yI"></script>
+<script type="text/javascript" src="resource/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="resource/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="resource/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="resource/OpenLayers-2.11/OpenLayers.js"></script>
+<script type="text/javascript" src="resource/js/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="resource/js/flot/jquery.flot.selection.min.js"></script>
+<script type="text/javascript" src="resource/flotlabels/jquery.flot.axislabels.js"></script>
+<script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false"></script> <!-- &key=AIzaSyB1OApFshSYU6P8eUk7BpF6_oPMD9Du8yI"></script>-->
 <script type="text/javascript" src="flora.js"></script>
 <link rel=stylesheet href="style.css" type="text/css" media="screen, print">
 </head>
@@ -32,39 +31,18 @@
 				<a class="brand" href="#" onclick="window.location.reload();" style="font-size:32px; color:white;"><b>Floras Explorer</b></a>
 
 				<div class="nav-collapse">
-					<ul class="nav">
+					<ul class="nav" style="margin:8px 15px;">
 						<li><a href="#" onclick="window.location.reload();">Home</a></li>
 						<li><a id="about" href="#">About</a></li>
 						<li><a id="contact" href="#">Contact</a></li>
 						<li><a id="help" href="#">Help</a></li>
 					</ul>
-					<span style="position:absolute;top:76px;right:250px;"><span style="font-size:24px;color:red;">Beta-version</span> (not yet ready for widespread use)</span>
+					<!--<span style="position:absolute;top:76px;right:250px;">
+                                            <span style="font-size:24px;color:red;">Beta-version</span> (not yet ready for widespread use)
+                                        </span>-->
 				</div>
 			
 				<ul class="nav pull-right">
-					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In <b class="caret"></b></a>
-						<div class="dropdown-menu">
-							<form action="" id="form_login" style="margin: 0; padding: 3px 15px" accept-charset="utf-8" method="post">
-								<fieldset class="control-group">
-									<label for="form_username" class="control-label">Username</label>
-									<div class="input-prepend" style="white-space: nowrap">
-										<span class="add-on"><i class="icon-user"></i></span><input type="username" name="username" id="form_username" autocomplete="on" class="span2">
-									</div>
-								</fieldset>
-								<fieldset class="control-group">
-									<label for="form_password" class="control-label">Password</label>
-									<div class="input-prepend" style="white-space: nowrap">
-										<span class="add-on"><i class="icon-lock"></i></span><input type="password" name="password" id="form_password" class="span2">
-									</div>
-								</fieldset>
-								<label class="checkbox"> <input type="checkbox" name="remember" value="true" /> Remember me
-								</label>
-								<p class="navbar-text">
-									<button type="submit" class="btn btn-primary">Login</button>
-								</p>
-							</form>
-						</div>
-					</li>
 				</ul>
 			</div>
 		</div>
@@ -72,8 +50,8 @@
 		
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span1">&nbsp;</div>
-			<div class="span2">
+			<div class=""></div>
+			<div class="span3" style="max-width:280px;">
 				<div class="well sidebar-nav">
 					<ul class="nav nav-list">
 						<li class="nav-header">Search Options</li>
@@ -83,11 +61,11 @@
 					<div class="accordion" id="accordion2">
 						<div class="accordion-group">
 							<div class="accordion-heading">
-								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordState"> State or Province </a>
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordState"> State(s) or Province(s) </a>
 							</div>
 							<div id="accordState" class="accordion-body collapse">
 								<div class="accordion-inner">
-									<select id="idstate" class="span9" multiple="multiple" size="5">
+									<select id="idstate" class="span9" multiple="multiple" size="5" style="width:100%">
 										<option value="" selected> = Select =</option>
 									</select> <input id="searchState" class="btn btn-info" type="button" value="Search" />
 								</div>
@@ -171,7 +149,7 @@
 						<div class="span6"><input id="Sitename" type="text" ></div>
 					</div>
 					<div class="row">
-						<div class="span2">Year of Study</div>
+						<div class="span2">Year of study</div>
 						<div class="span6">
 							<div class="input-prepend">
 								<span class="add-on">From:</span><input class="span1 input-mini" id="Year_min" type="text" > &nbsp;
@@ -182,7 +160,7 @@
 					
 					<br>
 					<div class="row">
-						<div class="span2">State/province</div>
+						<div class="span2">State/Province</div>
 						<div class="span6">
 							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#advstate"><span style='color:#08C;'>select</span></a>
 							<div id="advstate" class="accordion-body collapse span8">
@@ -193,7 +171,7 @@
 					
 					<br>
 					<div class="row">
-						<div class="span2">Type of Region</div>
+						<div class="span2">Type of region</div>
 						<div class="span6"><input type="checkbox" id="Flora_definition" value="Arbitrary" /> Arbitrarily delineated</div>
 					</div>
 					<div class="row">
@@ -252,6 +230,9 @@
 						<div class="span2">Habitat:</div>
 						<div class="span3"><input id="Habitat" type="text" ></div>
 					</div>
+                                        <div class="row span6">
+                                            <input type="checkbox" id="datafilter" value="Include Data Only" /> Only include floras with location and taxonomic summaries.
+                                        </div>
 					
                 </div>
               </div>
@@ -278,29 +259,29 @@
 					</div>
 	
 					<div class="row">
-						<div class="span3">Latitude of centroid (dgrs)</div>
+						<div class="span3">Latitude of centroid (&#176;)</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">From:(south)</span><input class="span1 input-medium" id="midlat_min" type="text" >
+								<span class="add-on">From:(south) &nbsp; &nbsp;</span><input class="span1 input-medium" id="midlat_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">To:(north)</span><input class="span1 input-medium" id="midlat_max" type="text" >
+								<span class="add-on">To:(north) &nbsp;</span><input class="span1 input-medium" id="midlat_max" type="text" >
 							</div>
 						</div>
 					</div>
 	
 					<div class="row">
-						<div class="span3">Longitude of centroid (dgrs)</div>
+						<div class="span3">Longitude of centroid (&#176;)</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">From:(west)</span><input class="span1 input-medium" id="midlon_min" type="text" >
+								<span class="add-on">From:(west)&nbsp; &nbsp; &nbsp;</span><input class="span1 input-medium" id="midlon_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">To:(east)</span><input class="span1 input-medium" id="midlon_max" type="text" >
+								<span class="add-on">To:(east)&nbsp; &nbsp;</span><input class="span1 input-medium" id="midlon_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -309,12 +290,12 @@
 						<div class="span3">Elevation midpoint (m)</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Min</span><input class="span1 input-medium" id="midelev_min" type="text" >
+								<span class="add-on">Minimum &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;</span><input class="span1 input-medium" id="midelev_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Max</span><input class="span1 input-medium" id="midelev_max" type="text" >
+								<span class="add-on">Maximum &nbsp;</span><input class="span1 input-medium" id="midelev_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -354,12 +335,12 @@
 						<div class="span3">Longitude of westernmost pt</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">From:(west)</span><input class="span1 input-medium" id="Longitude_W_edge_min" type="text" >
+								<span class="add-on">From:(west) &nbsp;</span><input class="span1 input-medium" id="Longitude_W_edge_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">To:(east)</span><input class="span1 input-medium" id="Longitude_W_edge_max" type="text" >
+								<span class="add-on">To:(east) &nbsp;</span><input class="span1 input-medium" id="Longitude_W_edge_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -368,12 +349,12 @@
 						<div class="span3">Longitude of easternmost pt</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">From:(west)</span><input class="span1 input-medium" id="Longitude_E_edge_min" type="text" >
+								<span class="add-on">From:(west) &nbsp;</span><input class="span1 input-medium" id="Longitude_E_edge_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">To:(east)</span><input class="span1 input-medium" id="Longitude_E_edge_max" type="text" >
+								<span class="add-on">To:(east) &nbsp;</span><input class="span1 input-medium" id="Longitude_E_edge_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -382,12 +363,12 @@
 						<div class="span3">Lowest elevation (m)</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Min</span><input class="span1 input-medium" id="Min_Elev_m_min" type="text" >
+								<span class="add-on">Minimum &nbsp; &nbsp; &nbsp;</span><input class="span1 input-medium" id="Min_Elev_m_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Max</span><input class="span1 input-medium" id="Min_Elev_m_max" type="text" >
+								<span class="add-on">Maximum &nbsp;</span><input class="span1 input-medium" id="Min_Elev_m_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -396,12 +377,12 @@
 						<div class="span3">Highest elevation (m)</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Min</span><input class="span1 input-medium" id="Max_Elev_m_min" type="text" >
+								<span class="add-on">Minimum &nbsp; &nbsp; &nbsp;</span><input class="span1 input-medium" id="Max_Elev_m_min" type="text" >
 							</div>
 						</div>
 						<div class="span3">
 							<div class="input-prepend">
-								<span class="add-on">Max</span><input class="span1 input-medium" id="Max_Elev_m_max" type="text" >
+								<span class="add-on">Maximum &nbsp;</span><input class="span1 input-medium" id="Max_Elev_m_max" type="text" >
 							</div>
 						</div>
 					</div>
@@ -417,7 +398,7 @@
                 <div class="accordion-inner">
                 
 					<div class="row">
-						<div class="span2">Type of Publication</div>
+						<div class="span2">Type of publication</div>
 						<div class="span6"><input type="checkbox" id="Pubtype" value="article" /> Article</div>
 					</div>
 					
@@ -458,7 +439,7 @@
 					</div>
 	
 					<div class="row">
-						<div class="span2">Flora ID Number</div>
+						<div class="span2">Flora ID number</div>
 						<div class="span6">
 							<div class="input-prepend">
 								<span class="add-on">Min:</span><input class="span1 input-mini" id="REF_NO_min" type="text" > &nbsp;
