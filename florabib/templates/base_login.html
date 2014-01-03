@@ -2,14 +2,14 @@
 <html lang="en">
 <html>
 <head>
+    {% load staticfiles %}
 <title>Flora Explorer</title>
-    <link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="stylesheet" />      
-    <link type="text/css" href="http://static.cybercommons.org/css/catalog/login.css" rel="stylesheet" /> 
-    <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
-    <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
-    <!--<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.center.js"></script>-->
-    <script type="text/javascript" src="http://static.cybercommons.org/js/jquery.form.js"></script>
-    <script type="text/javascript" src="http://static.cybercommons.org/js/catalog/login.js"></script>
+    <link type="text/css" href="{% static 'css/cybercomui/jquery-ui-1.8.13.custom.css' %}" rel="stylesheet" />
+    <link type="text/css" href="{%  static 'catalog/login.css' %}" rel="stylesheet" />
+    <script type="text/javascript" src="{%  static 'js/jquery-1.7.min.js' %}"></script>
+    <script type="text/javascript" src="{%  static 'js/jquery-ui-1.8.10.custom.min.js' %}"></script>
+    <script type="text/javascript" src="{%  static 'js/jquery.form.js' %}"></script>
+    <script type="text/javascript" src="{%  static 'catalog/login.js' %}"></script>
     <style>
         body { font-size: 62.5%; }
         label, input { display:block; }
@@ -33,7 +33,7 @@
     <div id="content">
       <div id="header" style="border-width: 0px;border-style:solid;border-color:#b3ab96;border-bottom-width: 2px;" >
         <h1 style="width:100%;text-align:center;">Flora Explorer</h1>
-<!--<img style="margin-left:45px " src="http://static.cybercommons.org/css/cyberlogo/CyberCommonsScreen.png" alt="Cybercommons Data Catalog" height="40"  align="middle"/>-->
+        <!--<img style="margin-left:45px" src="path/to/image/image.png" alt="alt text" height="40" align="middle"/>-->
       </div>
       {% block content %}{% endblock %}
     </div>

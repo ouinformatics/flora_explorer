@@ -193,9 +193,10 @@
                 <form id="help_form_upload" action="" method="POST">
                     {% csrf_token %}
                     <input type="file" name="florahelp" id="florahelp" style="margin-left:10px;"/>
-                    <input id="form_submit_button" class="tp-button" type="submit" value="Submit Data Selection" style="margin-left:20px;"/>
+                    <input id="form_submit_button" class="tp-button" type="submit" value="Upload User Guide (pdf)" style="margin-left:20px;"/>
                     <input type="hidden" name="formtype" value="UPLOAD-HELP"/>
                     <h3>Status</h3>
+                    <span><b>Current User Guide: &nbsp;</b><a style="color:blue" href="{% static "flora/user_guide.pdf" %}" target="_blank">User Guide</a></span>
                     <div id='progress_status2'>
                         <span style='margin-left:20px;margin-right:10px;'>Loading Help file:</span>
                         <img  width="20%" height="14" src="{% static "img/ajax-loader.gif" %}" style="display: inline; ">
