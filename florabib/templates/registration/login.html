@@ -1,0 +1,35 @@
+{% extends "base_login.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<div id="login" style="margin-top:40px;margin-left:40px;">
+  <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+  {% csrf_token %}
+    <table id="table">
+    <tr>
+      <td>{{ form.username.label_tag }}</td>
+      <td>{{ form.username }}</td>
+   </tr>
+   <tr>
+     <td>{{ form.password.label_tag }}</td>
+     <td>{{ form.password }}</td>
+  </tr>
+  {% if form.errors %}
+  <tr>
+    <td style="width:140px;color:red;" colspan="2"><p>Error: Username and Password didn't match.</p></td>
+  </tr>
+  {% endif %}
+  </table>
+  <div id="float_right">
+    <input  id="loginbutton" type="submit" value="login" style="margin-right:60px;" />
+    <input type="hidden" name="next" value="{{ next }}" />
+  </div>
+  </form>
+   <!--<div style="padding-top:45px;clear:both;">
+    <button id="create-user">Create new user</button>
+  </div>-->
+
+</div>
+
+{% endblock %}

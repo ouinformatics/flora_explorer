@@ -1,0 +1,167 @@
+{% for res in results %}
+	<div class="BibSection">
+         <div class="title"> {{res.Title }}</div>
+{% if res.ReferenceType == "Journal Article" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year:</strong> {{res.Year }} <strong>Volume:</strong> {{res.Volume}} <strong>Pages:</strong> {{res.Pages}}</div>
+              <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+            </div>
+         </div>
+         <div > <strong>Journal:</strong> {{res.Journal }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div>
+
+{% elif res.ReferenceType == "Book" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type: </strong>{{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }}<strong> Number of Pages:</strong> {{res.NumberofPages}}</div>
+              <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+            </div>
+         </div>
+         <div > <strong>Publisher:</strong> {{res.Publisher }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div>
+         <div > <strong>City:</strong> {{res.City }}</div>
+         <div ><strong> Notes:</strong> {{res.Notes }}</div>
+{% elif res.ReferenceType == "Book Section" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} <strong>Pages:</strong> {{res.Pages}}</div>
+              <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+            </div>
+         </div>
+         <div > <strong>Book Title: </strong>{{res.BookTitle }}</div>
+         <div > <strong>Publisher:</strong> {{res.Publisher }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div>
+         <div > <strong>Editor:</strong> {{res.Editor }}</div>
+         <div > <strong>City:</strong> {{res.City }}</div>
+         <div > <strong>Notes: </strong>{{res.Notes }}</div>
+{% elif res.ReferenceType == "Generic" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} </div>
+              <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+            </div>
+         </div>
+         <div ><strong> Tertiary Title:</strong> {{res.TertiaryTitle }}</div>
+         <div > <strong>Author: </strong>{{res.Author }}</div> 
+         <div ><strong> Notes: </strong>{{res.Notes }}</div>        
+{% elif res.ReferenceType == "Thesis" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong>{{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} <strong>Number of Pages:</strong> {{res.NumberofPages}}</div>
+              <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+            </div>
+         </div>
+         <div > <strong>Author: </strong>{{res.Author }}</div>
+         <div ><strong> Degree:</strong> {{res.Degree }}</div>
+         <div ><strong> University:</strong> {{res.University }}</div>
+         <div ><strong> Notes: </strong>{{res.Notes }}</div>
+{% else %}
+        <div>
+              <div class="rfloat">
+                <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+                <div> <strong>Year: </strong>{{res.Year }} </div>
+                <!--<div><strong>Label:</strong> {{res.Label }}</div>-->
+              </div>
+           </div>
+            {% for key,values in res.items %}
+                {% if key not in "ReferenceType,Year,_id,RecordNumber,Keywords,Label" %}
+                <div ><strong>{{ key }}:</strong> {{ values }}</div>
+                {% endif %}
+            {% endfor %}
+{% endif %}
+
+       </div>
+       <div id="tabs" class="tabs">
+            {% if no_data == "True" %}
+            <div id="no_data">
+            <p></P>
+             <p><b>No Reference Data</b></P>
+             <b>Keywords: </b> [ {% for kk in res.Keywords %} {{kk}},   {% endfor %} ]
+            </div>
+
+            {% endif %}
+              <ul>
+                <!--<li><a href="#tabs-{{ forloop.counter }}">Site Name Reference Data Exploration {{ forloop.counter }}</a></li>-->
+              {% for dd in  dat1 %}
+                 <li><a href="#tabs-{{ forloop.counter }}"> {{ dd.Sitename }}</a></li>
+              {% endfor %}
+              </ul>
+              {% for da in dat %}
+                   <div id="tabs-{{ forloop.counter }}" >
+                       <!-- <div id="placeholder{{ forloop.counter }}" class="graph"><br/></div>-->
+                        <div id="place{{ forloop.counter }}" class="p_map"></div>
+                    <div>
+                            <div><strong>Site Name</strong></div>
+                            <div class="indent">{{da.Sitename}}</div>
+                            <div><strong>Reference No. </strong> {{da.REF_NO}}</div>
+                            <div><strong>Year of Study </strong> {{da.Year}}</div>
+                            <div><strong>Location</strong></div>
+                             <div class="indent"> State or Province: 
+                                  {% for ss in  da.State %}
+                                       {% if forloop.last %}
+                                            {{ ss }}
+                                       {% else %}
+                                           {{ ss }},
+                                       {% endif %}
+                                      
+                                  {% endfor %}
+                            </div>
+                            <div class="indent">Latitude: {{da.Latitude_S_edge}} – {{da.Latitude_N_edge}}N</div>
+                            <div class="indent">Longitude: {{da.Longitude_E_edge}} – {{da.Longitude_W_edge}}W</div>
+                            <div class="indent">Elevation: {{da.Min_Elev_m}} – {{da.Max_Elev_m}}m</div>
+                            <div><strong>Area</strong></div>
+                            <div class="indent">{{da.Area_hectares}} hectares</div>
+                            <div class="indent">Parcels: {{da.Parcels}}</div>
+                            <div><strong>Taxon Counts</strong></div>
+                            <div class="indent">Families: {{da.NO_Families}}</div>
+                            <div class="indent">Genera: {{da.NO_Genera}}</div>
+                            <div class="indent">Species: {{da.NO_Species}}</div>
+                            <div class="indent">Total Taxa: {{da.NO_Tot_Taxa}}</div>
+                            <div class="indent">Indigenous Species: {{da.NO_Indig_Spp}}</div>
+                            <div class="indent">Percent Exotic: {{da.perc_exot}}%</div>
+                            <div><strong>Flora Definition</strong> {{ da.Flora_definition }}</div>
+                            {% if da.Flora_definition == "Protected Area" %}
+                            <div class="indent">Jurisdiction: {{da.Jurisdiction}}</div>  
+                            <div class="indent">Political: {{da.Political}}</div>
+                            <div class="indent">Preserve Type: {{da.Preservetype}}</div>
+                            <div class="indent">Bot. Effort: {{da.Bot_effort}}</div>
+                            {% endif %}
+                            <div><strong>Status </strong> {{da.Status}}</div><br/>
+
+ 			       
+                       </div>
+                    </div>
+	    {% endfor %} 
+       </div>      
+{% empty %}
+         <div class="note">
+        Your search yielded no results
+        </div>
+{% endfor %}
+<script type="text/javascript">
+$(function () {
+            {% if no_data == "True" %}
+                $('#map').hide();
+            {% else %}
+              $('#tabs').tabs({
+               select: function(event,ui) {
+                var ind = ui.index+1+''
+                tecoLayer.removeAllFeatures();
+                $("#map").appendTo("#place" + ind);
+                var feat =  features[ui.index];
+                //var bnd = feat[0].geometry.getBounds().clone();
+                //bounds = new OpenLayers.Bounds(bnd.left+0.7,bnd.bottom-0.7,bnd.right-0.7,bnd.top+0.7);
+                //map.zoomToExtent(bounds);
+                tecoLayer.addFeatures(feat);
+                }
+              });
+            {% endif %}
+
+});
+</script>

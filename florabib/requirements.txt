@@ -1,0 +1,11 @@
+Django
+PIL
+SQLAlchemy
+ipython
+jsonlib
+mongoengine
+pymongo
+python-stdnet
+redis
+simplejson
+wsgiref

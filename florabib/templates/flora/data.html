@@ -1,0 +1,211 @@
+{% extends 'base_data.html' %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $( document ).ready( function() {
+            $('#taskwork').hide()
+            $('#X-Progress-ID').val(makeid());
+            var bar = $('.bar');
+            var percent = $('.percent');
+            var status = $('#status');
+            var options = {
+              dataType:'json',
+              beforeSubmit: validate,
+              beforeSend:function() {
+                    status.empty();
+                    var percentVal = '0%';
+                    bar.width(percentVal)
+                    percent.html(percentVal);
+                    $('#taskwork').hide()
+                    $('#upload_status').show()
+                    $('#progress').show()
+                },
+              uploadProgress: function(event, position, total, percentComplete) {
+                    var percentVal = percentComplete + '%';
+                    bar.width(percentVal)
+                    percent.html(percentVal);
+                    if (percentVal=='100%'){
+                        $('#taskwork').show()
+                        $('#upload_status').hide()
+                    }
+                },
+              error: processError,
+              success: processUpload
+            };
+            $('#form_upload').ajaxForm(options);
+            var options1 = {
+              dataType:'json',
+              beforeSend:function() {
+                $('#progress_status1').show();
+              },
+              error: processError,
+              success: processSet
+            };
+            
+            $('#form_set').ajaxForm(options1);
+            var options2 = {
+                dataType:'json',
+                beforeSubmit: validate,
+                beforeSend:function() {
+                    $('#progress_status2').show();
+                },
+                error: processError2,
+                success: processSet2
+            }
+            $('#help_form_upload').ajaxForm(options2)
+            $("#tabs").tabs();
+            $('input[type=submit]').button();
+            $('#dataset').change( function(){
+                $('.selected').text('Current Selection: ' + $('#dataset').val());
+            });
+            $('#dataset').val( $("option:last").val());
+            $('.selected').text('Current Selection: ' + $('#dataset').val());
+            $('#progress_status1').hide()
+            $('#progress_status2').hide()
+        });
+        function validate(formData, jqForm, options) { 
+            for (var i=0; i < formData.length; i++) { 
+                if (!formData[i].value) { 
+                    alert('Please enter all files prior to Flora Data Upload.'); 
+                    return false; 
+                } 
+            } 
+        }
+        function makeid(){
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for(var i=0;i<15;i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        }
+        function processUpload(data){
+            $('#taskwork').hide();
+            $('#progress').hide();
+            var percentVal = '100%';
+            $('.bar').width(percentVal)
+            $('.percent').html(percentVal);
+            $('#status').html(data.message);
+            alert(data.set);
+            if(data.set != ''){
+                $('#dataset')
+                 .append($("<option></option>")
+                 .attr("value",data.set)
+                 .text(data.set));
+            } 
+        }
+        function processError(data, statusText, xhr, $form){
+            $('#progress_status1').hide()
+            if (statusText == 'parsererror') {
+                alert('Login session has expired. You will be redirected');
+                window.location.reload();
+            }else{
+                alert('Error has occurred: ' + statusText);
+            }
+        }
+        function processSet(data, statusText, xhr, $form){
+                //alert('status: ' + statusText + '\n\nresponseText: \n' + data.message); 
+                $('#progress_status1').hide()
+                $('#status1').html(data.message);
+        }
+        function processSet2(data, statusText, xhr, $form){
+            //alert('status: ' + statusText + '\n\nresponseText: \n' + data.message);
+                $('#progress_status2').hide()
+                $('#status2').html(data.message);
+        }
+        function processError2(data, statusText, xhr, $form){
+            $('#progress_status2').hide()
+            if (statusText == 'parsererror') {
+                alert('Login session has expired. You will be redirected');
+                window.location.reload();
+            }else{
+                alert('Error has occurred: ' + statusText);
+            }
+        }
+    </script>
+{% endblock %}
+{% block main %}
+    {% load staticfiles %}
+    <div id="results">
+        <div id='data'>
+          <h1 style="text-align:center;">Flora Explorer Data Management</h1>
+          <div id="tabs">
+              <ul>
+                <li><a href="#tabs-1">Upload New Flora Data</a></li>
+                <li><a href="#tabs-2">Set Flora Application Data</a></li>
+                <li><a href="#tabs-3">Flora User Guide</a></li>
+              </ul>
+            <div id="tabs-1">
+              <form id="form_upload" action="" method="POST">
+                {% csrf_token %}
+                <h5>Flora Data File (csv File Format)</h5>
+                <input type="file" name="floradata" id="floradata" style="margin-left:10px;"/>
+                <h5>Endnote Export - 'Show All Fields' (File Type - Text Only)</h5>
+                <input type="file" name="allfields" id="floradata" style="margin-left:10px;"/>
+                <h5>Endnote Export - 'BibTeX Export' (File Type - Text Only)</h5>
+                <input type="file" name="bitext" id="bibtext" style="margin-left:10px;"/>
+                <h5>Endnote Export - 'RefMan (RIS) Export' (File Type - Text Only)</h5>
+                <input type="file" name="ris" id="ris" style="margin-left:10px;"/>
+                <input type="hidden" id="X-Progress-ID" name="X-Progress-ID" value=""/>
+                <input type="hidden" name="formtype" value="UPLOAD"/>
+                <input id="form_submit_button" class="tp-button" type="submit" value="Submit Data Upload" style="margin-left:60px;" />
+                <h3>Status</h3>
+                <div id='progress' class="progress">
+                    <div id='upload_status'>
+                        <div class="bar"></div>
+                        <div class="percent">0%</div>
+                    </div>
+                    <div id='taskwork'>
+                        <span style='margin-left:20px;margin-right:10px;'>Loading Data:</span> 
+                        <img  width="40%" height="18" src="{% static "img/ajax-loader.gif" %}" style="display: inline; ">
+                    </div>
+                </div>
+                <div id='status'></div>
+              </form>
+            </div>
+            <div id="tabs-2">
+              <form id="form_set" action="" method="POST" style="display:inline-block;">
+                {% csrf_token %}
+                <h3>Flora Explorer Dataset</h3>
+                <div class='span3'>
+                    <label for='dataset' style="margin:5px 15px;"><b>Select Available Dataset</b></label>
+                    <input type="hidden" name="formtype" value="SET"/>
+                    <select name='dataset' id='dataset' size="15">
+                    {% for opt in data_list %}
+                        <option value="{{ opt }}">{{ opt }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <div class='span5' id='right' style="">
+                    <label class='selected' style="font-weight:bold;"></label><br>
+                    <input id="form_submit_button" class="tp-button" type="submit" value="Submit Data Selection" style="margin-left:20px;"/>
+                    <input type="hidden" name="formtype" value="SETDATA"/>
+                    <h3>Status</h3>
+                    <div id='progress_status1'>
+                        <span style='margin-left:20px;margin-right:10px;'>Loading Data:</span>
+                        <img  width="40%" height="18" src="{% static "img/ajax-loader.gif" %}" style="display: inline; ">
+                    </div>
+                    <div id='status1'></div>
+                </div>
+              </form>
+            </div>
+            <div id="tabs-3">
+                <h3>Flora Explorer Help File</h3>
+                <form id="help_form_upload" action="" method="POST">
+                    {% csrf_token %}
+                    <input type="file" name="florahelp" id="florahelp" style="margin-left:10px;"/>
+                    <input id="form_submit_button" class="tp-button" type="submit" value="Submit Data Selection" style="margin-left:20px;"/>
+                    <input type="hidden" name="formtype" value="UPLOAD-HELP"/>
+                    <h3>Status</h3>
+                    <div id='progress_status2'>
+                        <span style='margin-left:20px;margin-right:10px;'>Loading Help file:</span>
+                        <img  width="20%" height="14" src="{% static "img/ajax-loader.gif" %}" style="display: inline; ">
+                    </div>
+                    <div id='status2'></div>
+                </form>
+            </div>
+          </div>
+            
+        </div>
+    </div>
+{% endblock %}
+                   

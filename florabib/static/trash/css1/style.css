@@ -1,0 +1,110 @@
+#centered { 	
+  text-align: left;
+  vertical-align: middle;	
+  margin: 0px auto;
+  padding: 1px;
+  width: 950px;
+  background-color: #f4f0ec;
+  border: 1px solid #e0cfc2;
+}
+div.title {
+  text-align: center;
+  vertical-align: middle;
+  width=100%;
+  
+  font-size: 28px;
+  border: 1px solid #e0cfc2;
+}
+div.maintitle {
+  text-align: center;
+  vertical-align: middle;
+  width=100%;
+  color: #f4f0ec;
+  font-size: 28px;
+  border: 1px solid #D9D3C4;
+  background-color: #B3AB96;
+}
+
+div.graph {
+   float:right;
+   width:400px;
+   height:300px;
+   border: 1px solid #D9D3C4;
+   vertical-align: middle;
+   margin: 45px auto;
+
+   }
+div.data {
+   float:left;
+ width:200px;   
+}
+div.endnote{
+  Clear: Both;
+}
+
+#spinner {
+  display: none;
+  position: relative;
+}
+
+div.padded {
+  padding-top: 1px;
+}
+
+div.margin {
+  margin-top: 1px;
+}
+div.lfloat {
+  float:left;
+height:300px;
+}
+div.rfloat {
+  float:right;
+}
+div.clear {
+  clear: both;
+}
+#tabs {
+  font-size:12px;
+}
+div.note {
+  padding: 15px;
+  background: #FFFFD4;
+  border: 1px solid #DDDDB2;
+}
+
+.hint {
+  font-size: 0.8em;
+  color: #888;
+  
+}
+div.BibSection{
+ border: 1px solid #DDDDB2;
+}
+div.search{
+padding: 10px 10px 10px 10px;
+float:right;
+font-size: 14px;
+
+}
+
+#dialog_link {
+    padding: .4em 1em .4em 20px;
+    text-decoration: none;
+    position: relative;
+    width:100%;
+}
+#dialog_link span.ui-icon {
+    margin: 10px 5px 0 0;
+    position: absolute;
+    left: .2em;top: 50%;
+    margin-top: -8px;
+}
+#dialog{
+width:800px;
+} 			
+#Selct {width: 95%; height:90%;}
+div.indent {  
+      padding-left: 30px;  
+        
+    }  

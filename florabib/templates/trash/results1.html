@@ -1,0 +1,149 @@
+{% for res in results %}
+	<div class="BibSection">
+         <div class="title"><strong> {{res.Title }}</strong></div>
+{% if res.ReferenceType == "Journal Article" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year:</strong> {{res.Year }} <strong>Volume:</strong> {{res.Volume}} <strong>Pages:</strong> {{res.Pages}}</div>
+              <div class="hint"> Record Number: {{res.RecordNumber}} Label: {{res.Label }}</div>
+            </div>
+         </div>
+         <div > <strong>Journal:</strong> {{res.Journal }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div><br/>
+
+{% endif %}
+{% if res.ReferenceType == "Book" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type: </strong>{{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }}<strong> Number of Pages:</strong> {{res.NumberofPages}}</div>
+              <div class="hint"><strong> Record Number:</strong> {{res.RecordNumber}} <strong>Label:</strong> {{res.Label }}</div>
+            </div>
+         </div>
+         <div > <strong>Publisher:</strong> {{res.Publisher }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div>
+         <div > <strong>City:</strong> {{res.City }}</div>
+         <div ><strong> Notes:</strong> {{res.Notes }}</div><br/>
+{% endif %}
+{% if res.ReferenceType == "Book Section" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} <strong>Pages:</strong> {{res.Pages}}</div>
+              <div class="hint"> <strong>Record Number:</strong> {{res.RecordNumber}} <strong>Label:</strong> {{res.Label }}</div>
+            </div>
+         </div>
+         <div > <strong>Book Title: </strong>{{res.BookTitle }}</div>
+         <div > <strong>Publisher:</strong> {{res.Publisher }}</div>
+         <div > <strong>Author:</strong> {{res.Author }}</div>
+         <div > <strong>Editor:</strong> {{res.Editor }}</div>
+         <div > <strong>City:</strong> {{res.City }}</div>
+         <div > <strong>Notes: </strong>{{res.Notes }}</div><br/>
+{% endif %}
+{% if res.ReferenceType == "Generic" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong> {{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} </div>
+              <div class="hint"> <strong>Record Number:</strong> {{res.RecordNumber}} <strong>Label:</strong> {{res.Label }}</div>
+            </div>
+         </div>
+         <div ><strong> Tertiary Title:</strong> {{res.TertiaryTitle }}</div>
+         <div > <strong>Author: </strong>{{res.Author }}</div> 
+         <div ><strong> Notes: </strong>{{res.Notes }}</div><br/>        
+{% endif %}
+{% if res.ReferenceType == "Thesis" %}
+         <div>
+            <div class="rfloat">
+              <div> <strong>Reference Type:</strong>{{res.ReferenceType}}</div>
+              <div> <strong>Year: </strong>{{res.Year }} <strong>Number of Pages:</strong> {{res.NumberofPages}}</div>
+              <div class="hint"><strong> Record Number:</strong> {{res.RecordNumber}} <strong>Label:</strong> {{res.Label }}</div>
+            </div>
+         </div>
+         <div > <strong>Author: </strong>{{res.Author }}</div>
+         <div ><strong> Degree:</strong> {{res.Degree }}</div>
+         <div ><strong> University:</strong> {{res.University }}</div>
+         <div ><strong> Notes: </strong>{{res.Notes }}</div><br/>
+{% endif %}
+
+       </div>
+       <div id="tabs" class="tabs">
+              <ul>
+              {% for dd in  dat1 %}
+                 <li><a href="#tabs-{{ forloop.counter }}">Reference Data Exploration {{ forloop.counter }}</a></li>
+              {% endfor %}
+              </ul>
+              {% for da in dat %}
+                   <div id="tabs-{{ forloop.counter }}" ><div id="placeholder{{ forloop.counter }}" class="graph"><br/></div>
+                       <div>
+                            <div><strong>Sitename:</strong></div><br/>
+                            <div class="indent">{{da.Sitename}}</div><br/>
+                            <div><strong>Location</strong></div><br/>
+                             <div class="indent"> States: 
+                                  {% for ss in  da.State %}
+                                       {% if forloop.last %}
+                                            {{ ss }}
+                                       {% else %}
+                                           {{ ss }},
+                                       {% endif %}
+                                      
+                                  {% endfor %}
+                            </div>
+                            <div class="indent">Center Latitude, Longitude ( {{da.midlat}}, {{da.midlon}} )</div>
+                            <div class="indent">Bounding Box ( {{da.Latitude_N_EDGE}}, {{da.Longitude_E_edge}}, {{da.Latitude_S_EDGE}}, {{da.Longitude_W_edge}} )</div>
+                            <div class="indent">Min. Mid. Max. Elevation(meters) ( {{da.Min_Elev_m}}, {{da.midelev}}, {{da.Max_Elev_m}} ) </div><br/>
+                            <div><strong>Area</strong></div><br/>
+                            <div class="indent">{{da.Area_hectares}} hectares</div>
+                            <div class="indent">Parcels: {{da.Parcels}}</div><br/>
+                            <div><strong>Biodiversity</strong></div><br/>
+                            <div class="indent">Families: {{da.NO_Families}}</div>
+                            <div class="indent">Genera: {{da.NO_Genera}}</div>
+                            <div class="indent">Species: {{da.NO_Species}}</div>
+                            <div class="indent">Total Taxa: {{da.NO_Tot_Taxa}}</div>
+                            <div class="indent">Indigenous Species: {{da.NO_Indig_Spp}}</div>
+                            <div class="indent">Percent Exotic: {{da.percexot}}%</div><br/>
+                            <div><strong>Classification</strong></div><br/> 
+                            <div class="indent">Jurisdiction: {{da.Jurisdiction}}</div>  
+                            <div class="indent">Political: {{da.Political}}</div>
+                            <div class="indent">Preserve Type: {{da.Preservetype}}</div>
+                            <div class="indent">Bot. Effort: {{da.Bot_effort}}</div><br/>
+
+                            <div><strong>Remarks: </strong> {{da.Remarks}}</div>
+                            <div><strong>Year: </strong> {{da.Year}}</div> 
+                            <div><strong>Status: </strong> {{da.Status}}</div><br/>
+
+ 			       
+                       </div>
+                    </div>
+	    {% endfor %} 
+       </div>      
+{% empty %}
+         <div class="note">
+        Your search yielded no results
+        </div>
+{% endfor %}
+
+{% for dd in dat2 %}
+<script type="text/javascript">
+$(function () {
+    $('#tabs').tabs();
+    var d{{ forloop.counter }} = [[{{dd.NO_Families}}, .5], [{{dd.NO_Genera}}, 2], [{{ dd.NO_Species}}, 3.5], [{{dd.NO_Tot_Taxa }}, 5],[{{dd.NO_Indig_Spp}},6.5]];
+    var datasets = [{ "data" : d{{ forloop.counter }} }];
+    var options = {
+                   bars: {show: true, horizontal: true,color : "#cb842e" },
+                   xaxis: { min: 0 },
+                   yaxis: { ticks:  [
+                                     [1, "Families"],
+                                     [2.5, "Genera"],
+                                     [4, "Species"],
+                                     [5.5, "Total Taxa"],
+                                     [7, "Indig. Species"]
+
+                                    ] 
+                          }};
+                       
+    $.plot($("#placeholder{{ forloop.counter }}"),datasets,options);
+});
+</script> 	
+{% endfor %}

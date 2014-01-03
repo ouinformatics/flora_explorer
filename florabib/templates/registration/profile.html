@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>Cybercommons Account Profile</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercom/style.css" rel="Stylesheet"/>
+<!--<style>
+    BODY{font-family:sans-serif; }
+</style>-->
+</head>
+<body style="padding:30px;"><!-- link="#C0C0C0" vlink="#808080" alink="#FF0000" style="padding:10px;">-->
+    <div id ="content" class="ui-widget-content" style="width:1000;padding:3px;" >
+      <div class="ui-widget-header ui-corner-all" style="height:38px;padding:2px;indent:2px;">
+       <strong>Cybercommons Account Profile</strong>
+        <div style="float:right;">Welcome, {{ user }}   <div ><a href="{{ baseAccount_path }}logout/">logout</a></div> </div>
+      </div>
+      <div style="clear:both;">
+        <p> Thank you for visiting your profile page.</p>
+        <p> Future development will allow you to set new passwords and share application data with other registered users.</p>
+      </div>
+      <div>
+        <div class="ui-widget-header ui-corner-all" style="padding:2px;indent:2px;">{{host}} Application Directory</div>
+        <ol>
+        {% for link  in apps %}
+          <li><strong> {{link.remark}}  -  </strong>  <a style="color:#469425;" href="{{link.result_text}}">{{link.result_text}}</a><br/>
+        {% endfor %}
+        </ol>
+      </div>
+    </div>
+</body>
+</html>

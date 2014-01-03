@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block extra_js %}
+<script type="text/javascript">
+var map, drawControls, selectControl, selectedFeature;
+var extent = new OpenLayers.Bounds(-178.3125, 6.44921875, -36.6875, 95.55078125);
+$( document ).ready( function() {
+        //$("#map").hide();
+        {% if no_data == "False" %}
+          initialize_map({{ label }});
+        {% endif %}
+         // $('#tabs').tabs();
+        $( '#results' ).html( '&nbsp;' ).load( '/florabib/flora/?q={{ label }}',function(){
+            $("#map").appendTo("#place1");
+          //  $("#map").show();
+        });
+        //\{     % url demo_bib_search %\}
+        //$("#map").appendTo("#placeholder1");
+        //var pos =   $('#placeholder1').position();
+});
+//$(window).resize(function() {
+//          var pos =   $('#placeholder1').position();
+//          $(#map).style.position="absolute";
+//            $(#map).style.top= pos.top;
+//            $(#map).style.left= pos.left;
+//        });
+</script>
+ 
+{% endblock %}
+{% block main %}
+         <!--<div class="" style="text-align: center;">
+           <h1>Flora Exploration </h1> 
+         </div>-->
+         <div id="results"></div>
+        <div id="map" class="amap"></div>
+{% endblock %}
+                   

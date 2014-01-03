@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block extra_js %}
+<script type="text/javascript">
+$( document ).ready( function() {
+          initialize_map();          
+          $('#tabs').tabs();
+          $( '#results' ).html( '&nbsp;' ).load( '{% url demo_bib_search %}?q=11');
+          
+// Dialog
+           $('#dialog').dialog({ autoOpen: false, width:800, resizable:false,
+	          buttons: {"Ok": function() {
+                               var ss = $("select#Selct").val();
+                               $('#results' ).html( '&nbsp;' ).load( '{% url demo_bib_search %}?q=' + ss );
+                               $(this).dialog("close");
+                                            },
+	         "Cancel": function() {$(this).dialog("close");
+	        }}
+           });
+// Dialog Link
+           $('#dialog_link').click(function(){
+	    $('#dialog').dialog('open');
+	    return false;
+	    });
+
+          $('#Selct').dblclick( function() {
+	      var ss = $("select#Selct").val();
+             $('#results' ).html( '&nbsp;' ).load( '{% url demo_bib_search %}?q=' + ss );
+             $('#dialog').dialog("close");
+           });
+          $('#Selct').dblclick( function() {
+	      var ss = $("select#Selct").val();
+             $('#results' ).html( '&nbsp;' ).load( '{% url demo_bib_search %}?q=' + ss );
+             $('#dialog').dialog("close");
+           });
+ 
+});
+
+</script>
+ 
+{% endblock %}
+{% block main %}
+         <div class="maintitle">
+           <h3> Flora Exploration </h3>
+           <div class="search"><a href="#" id="dialog_link" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>    Select Flora     </a></div>
+
+         </div>
+         <div id="results"></div>
+
+         <!-- ui-dialog -->
+         <div id="dialog"  style="width: 800px; height: 800px;" resizable="False" title="Select Flora">
+            <p>Please Select Flora Reference:<br/>Label Title</p>
+            <select id="Selct" width="600px"; size="20"; >
+              {% for r in select %}
+                 <option value="{{ r.Label}}">{{ r.Label}} : {{r.ShortTitle}}</option>
+              {% endfor %}
+            </select>
+        </div>
+{% endblock %}
+                   
