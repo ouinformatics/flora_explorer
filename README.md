@@ -13,8 +13,17 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
         [Mongo Web API](https://github.com/ouinformatics/cybercom)
         <pre>
             #Install pip and virtualenv
-            easy_install pip
-            pip install virtualenv
+            $ easy_install pip
+            $ pip install virtualenv
+
+            #Create apps directory 
+            $ mkdir -p /var/www/apps/mongo/
+            $ cd /var/www/apps/mongo/
+
+            #Create python virtual environment
+            $ virtualenv virtpy/
+            $ source virtpy/bin/activate
+            $ pip install https://github.com/ouinformatics/cybercom/tarball/master
         </pre> 
     * Flora and Florabib Applications
         [Flora Explorer](https://github.com/ouinformatics/flora_explorer)   
