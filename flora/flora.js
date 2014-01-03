@@ -23,7 +23,7 @@ var verDate = {"0": "3.00", "1": "05 September 2013"};
 //Set url base need for application
 //Please change these variables instead of urls in code
 var floraBase = "/flora";
-var mongoBase = "http://test.cybercommons.org/mongo";
+var mongoBase = "/mongo";
 var florabibBase = "/florabib"
 var staticBase = "";// not used
 //*****************************************************
