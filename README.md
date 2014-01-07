@@ -64,12 +64,12 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 $ rm data/flora.db
                 $ python mangage.py syncdb
 
-                #restart apache httpd web server
-                $ sudo service httpd restart
-
                 #will ask for you to create superuser. Create superuser and password
                 #User used for admin in django user administration. Login /florabib/admin/
                 #Done with installation. 
+
+                #restart apache httpd web server
+                $ sudo service httpd restart
             
             </pre>
 
