@@ -4,15 +4,15 @@
 Flora web app and dynamic florabib django web application.
 
 ### Installation ###
-The following installation instructions assume a Linux Centos OS and Apache Web Server with Python WSGI module installed. Python virtual environment is also very useful when deploying python application.
+The following installation instructions assume a Linux Centos OS and Apache Web Server with Python WSGI module installed. The following comonents are required for the flora explorer web application to function properly.
  * Database 
-    * MongoDB 
+    * Mongo Database  
         [Mongo DB Installation](http://docs.mongodb.org/manual/installation/)
  * Web Applications 
     * Mongo Cybercommons Web API Applicatiion (# are comments and $ is commands)
         [Mongo Web API](https://github.com/ouinformatics/cybercom)
         <pre>
-            #Install pip and virtualenv
+            #Install pip and virtualenv on server (Skip this section if already installed)
             $ sudo easy_install pip
             $ sudo pip install virtualenv
 
@@ -24,7 +24,7 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
             $ virtualenv virtpy/
             $ source virtpy/bin/activate
 
-            #See help folder for requirements.txt
+            #See help folder for mongo-requirements.txt
             $ pip install -r mongo-requirements.txt
             $ pip install pandas==0.7.3
     
