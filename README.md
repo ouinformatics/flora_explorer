@@ -9,7 +9,7 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
     * MongoDB 
         [Mongo DB Installation](http://docs.mongodb.org/manual/installation/)
  * Web Applications 
-    * Mongo Cybercommons Web API Applicatiion
+    * Mongo Cybercommons Web API Applicatiion (# are comments and $ is commands)
         [Mongo Web API](https://github.com/ouinformatics/cybercom)
         <pre>
             #Install pip and virtualenv
@@ -64,16 +64,20 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 $ rm data/flora.db
                 $ python mangage.py syncdb
 
-                #will ask for you to create superuser. Create user and password
+                #restart apache httpd web server
+                $ sudo service httpd restart
+
+                #will ask for you to create superuser. Create superuser and password
+                #User used for admin in django user administration. Login /florabib/admin/
                 #Done with installation. 
             
             </pre>
 
  
-     ### settings.py ###
+        ### settings.py ###
         * Change the secret key - highly recommended since key was visible on github
         * Create UPLOAD_DIR and make sure apache user  has permisions to read write
         * LOGIN_URL should be correct unless you set up application with alternative url base directory
         
-     ### Mongo database ###
+        ### Mongo database ###
         * use backup or upload procedure in florabib application to create data.
