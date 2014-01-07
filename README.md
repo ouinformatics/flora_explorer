@@ -43,33 +43,30 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 #Defaults /flora , /mongo , /florabib 
             </pre>
         * Install Florabib application
-        <pre>
-            #Copy florabib directtory to apps folder
-            $ cp -r florabib /var/www/apps/
-            $ cd /var/www/apps/florabib/
+            <pre>
+                #Copy florabib directtory to apps folder
+                $ cp -r florabib /var/www/apps/
+                $ cd /var/www/apps/florabib/
 
-            #Create python virtual environment
-            $ virtualenv virtpy/
-            $ source virtpy/bin/activate
+                #Create python virtual environment
+                $ virtualenv virtpy/
+                $ source virtpy/bin/activate
 
-            #See help folder for requirements.txt
-            $ pip install -r requirements.txt
+                #See help folder for requirements.txt
+                $ pip install -r requirements.txt
 
-            #Create wsgi file to install mod_wsgi application
-            #See example florabib.wsgi file in help folder
+                #Create wsgi file to install mod_wsgi application
+                #See example florabib.wsgi file in help folder
             
-            #Initialize database for username and login
-            # Remove existing database. 
-            $ rm data/flora.db
-            $ python mangage.py syncdb
+                #Initialize database for username and login
+                # Remove existing database. 
+                $ rm data/flora.db
+                $ python mangage.py syncdb
 
-            #will ask for you to create superuser. Create user and password
-            #Done with installation. 
-            #Please check settings.py and change secret key.
-            #This is highly recommended since key was visible on github
-            #Check to make sure that your UPLOAD 
+                #will ask for you to create superuser. Create user and password
+                #Done with installation. 
             
-        </pre> 
+            </pre> 
         settings.py
         * Change the secret key - highly recommended since key was visible on github
         * Create UPLOAD_DIR and make sure apache user  has permisions to read write
