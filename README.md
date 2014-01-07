@@ -67,10 +67,10 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 #Done with installation. 
             
             </pre> 
-        settings.py
+        ### settings.py ###
         * Change the secret key - highly recommended since key was visible on github
         * Create UPLOAD_DIR and make sure apache user  has permisions to read write
         * LOGIN_URL should be correct unless you set up application with alternative url base directory
         
-        Mongo database
+        ### Mongo database ###
         * use backup or upload procedure in florabib application to create data.
