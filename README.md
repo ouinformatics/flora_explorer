@@ -66,7 +66,8 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
 
                 #will ask for you to create superuser. Create superuser and password
                 #User used for admin in django user administration. Login /florabib/admin/
-                #Done with installation. 
+
+                #Update settings.py and Mongo Database (See below) 
 
                 #restart apache httpd web server
                 $ sudo service httpd restart
