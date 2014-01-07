@@ -29,7 +29,7 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
             $ pip install pandas==0.7.3
     
             #Create wsgi file to install mod_wsgi application
-            #See example in help folder
+            #See example_mongo.wsgi in help folder
         </pre> 
     * Flora and Florabib Applications
         [Flora Explorer](https://github.com/ouinformatics/flora_explorer)
@@ -39,7 +39,7 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 $ scp -r flora yourserver:/var/www/html/
                 $ cd /var/www/html/flora/
                 $ vi flora.js
-                #Change variable floraBase, mongoBase, florabibBase base url locations
+                #Check variable floraBase, mongoBase, florabibBase base url locations
                 #Defaults /flora , /mongo , /florabib 
             </pre>
         * Install Florabib application
@@ -55,8 +55,9 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 #See help folder for requirements.txt
                 $ pip install -r requirements.txt
 
-                #Create wsgi file to install mod_wsgi application
-                #See example florabib.wsgi file in help folder
+                #Use florabib.wsgi file for initializing mod_wsgi application
+                #Within apache conf.d directory create florabib.conf
+                #florabib.conf contains: WSGIScriptAlias /florabib /var/www/apps/florabib/florabib.wsgi
             
                 #Initialize database for username and login
                 # Remove existing database. 
@@ -66,11 +67,13 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 #will ask for you to create superuser. Create user and password
                 #Done with installation. 
             
-            </pre> 
-        ### settings.py ###
+            </pre>
+
+ 
+     ### settings.py ###
         * Change the secret key - highly recommended since key was visible on github
         * Create UPLOAD_DIR and make sure apache user  has permisions to read write
         * LOGIN_URL should be correct unless you set up application with alternative url base directory
         
-        ### Mongo database ###
+     ### Mongo database ###
         * use backup or upload procedure in florabib application to create data.
