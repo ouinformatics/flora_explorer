@@ -52,7 +52,7 @@ The following installation instructions assume a Linux Centos OS and Apache Web 
                 $ virtualenv virtpy/
                 $ source virtpy/bin/activate
 
-                #See help folder for requirements.txt
+                #Look in florabib folder for requirements.txt
                 $ pip install -r requirements.txt
 
                 #Use florabib.wsgi file for initializing mod_wsgi application
