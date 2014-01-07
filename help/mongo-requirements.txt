@@ -1,0 +1,13 @@
+Cheetah==2.4.4
+CherryPy
+Markdown==2.2.0
+python-dateutil==1.5
+SQLAlchemy==0.7.2
+geojson==1.0.1
+iso8601==0.1.4
+numpy==1.6.2
+#pandas==0.7.3 #has to be installed two phase1) numpy then pandas
+#psycopg2==2.4.2
+pymongo==2.1.1
+simplejson==2.2.1
+https://github.com/ouinformatics/cybercom/tarball/master
