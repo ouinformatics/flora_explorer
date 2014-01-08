@@ -4,7 +4,7 @@
 Flora web app and dynamic florabib django web application.
 
 ### Installation ###
-The following installation instructions assume a Linux Centos OS and Apache Web Server with Python WSGI module installed. The following comonents are required for the flora explorer web application to function properly.
+The following installation instructions assume a Linux Centos OS and Apache Web Server with Python WSGI module installed. The following components are required for the flora explorer web application to function properly.
  * Database 
     * Mongo Database  
         [Mongo DB Installation](http://docs.mongodb.org/manual/installation/)
