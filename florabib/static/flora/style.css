@@ -35,6 +35,9 @@ div.graph {
    margin: 15px;
    clear:both;
    }
+.gmnoprint{
+    display:none;
+}
 .p_map{
    float:right;
   /* width:400px;

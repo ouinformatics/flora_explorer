@@ -148,7 +148,8 @@ def copy_working_dir():
     put('/tmp/deploy_%(sitename)s.tgz' % env, '%(path)s/deploy_%(sitename)s.tgz' % env)
     run('cd %(path)s; tar -xf deploy_%(sitename)s.tgz; rm deploy_%(sitename)s.tgz' % env)
     local('rm /tmp/deploy_%(sitename)s.tgz' % env)
-
+def copy_db():
+    get('%(path)s/data/flora.db' % env,'data/flora.db')
 def install_requirements():
     """ 
     Install the contents of requirements.txt to the virtual environment 

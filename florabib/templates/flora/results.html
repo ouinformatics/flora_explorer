@@ -152,13 +152,13 @@ $(function () {
               $('#tabs').tabs({
                select: function(event,ui) {
                 var ind = ui.index+1+''
-                tecoLayer.removeAllFeatures();
+                floraLayer.removeAllFeatures();
                 $("#map").appendTo("#place" + ind);
                 var feat =  features[ui.index];
                 //var bnd = feat[0].geometry.getBounds().clone();
                 //bounds = new OpenLayers.Bounds(bnd.left+0.7,bnd.bottom-0.7,bnd.right-0.7,bnd.top+0.7);
                 //map.zoomToExtent(bounds);
-                tecoLayer.addFeatures(feat);
+                floraLayer.addFeatures(feat);
                 }
               });
             {% endif %}
